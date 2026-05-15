@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">WebGL Recipes Preview</title>
+  <desc id="desc">Preview of shader-driven triangle rendering and pipeline setup for WebGL recipes.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#020617" />
+      <stop offset="100%" stop-color="#111827" />
+    </linearGradient>
+    <linearGradient id="tri" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#22d3ee" />
+      <stop offset="100%" stop-color="#22c55e" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="620" fill="url(#bg)" rx="20" />
+  <text x="46" y="64" fill="#e2e8f0" font-family="Inter, Segoe UI, sans-serif" font-size="38" font-weight="700">
+    WebGL Demo Output Preview
+  </text>
+  <text x="46" y="96" fill="#94a3b8" font-family="Inter, Segoe UI, sans-serif" font-size="21">
+    clear buffers, compile shaders, link program, and render animated geometry.
+  </text>
+
+  <rect x="46" y="126" width="760" height="454" rx="16" fill="#000814" stroke="#1e293b" stroke-width="2" />
+  <line x1="108" y1="526" x2="742" y2="526" stroke="#334155" stroke-width="2" />
+  <line x1="108" y1="526" x2="108" y2="186" stroke="#334155" stroke-width="2" />
+  <polygon points="426,186 166,500 676,500" fill="url(#tri)" />
+  <circle cx="426" cy="186" r="6" fill="#f8fafc" />
+  <circle cx="166" cy="500" r="6" fill="#f8fafc" />
+  <circle cx="676" cy="500" r="6" fill="#f8fafc" />
+
+  <g transform="translate(842,146)">
+    <rect x="0" y="0" width="314" height="136" rx="12" fill="#0f172a" stroke="#334155" />
+    <text x="20" y="34" fill="#67e8f9" font-family="Inter, Segoe UI, sans-serif" font-size="20" font-weight="600">Vertex Shader</text>
+    <text x="20" y="66" fill="#cbd5e1" font-family="Menlo, monospace" font-size="14">attribute vec2 aPos;</text>
+    <text x="20" y="88" fill="#cbd5e1" font-family="Menlo, monospace" font-size="14">gl_Position = vec4(...);</text>
+  </g>
+
+  <g transform="translate(842,306)">
+    <rect x="0" y="0" width="314" height="136" rx="12" fill="#0f172a" stroke="#334155" />
+    <text x="20" y="34" fill="#86efac" font-family="Inter, Segoe UI, sans-serif" font-size="20" font-weight="600">Fragment Shader</text>
+    <text x="20" y="66" fill="#cbd5e1" font-family="Menlo, monospace" font-size="14">precision mediump float;</text>
+    <text x="20" y="88" fill="#cbd5e1" font-family="Menlo, monospace" font-size="14">gl_FragColor = vec4(...);</text>
+  </g>
+
+  <g transform="translate(842,466)">
+    <rect x="0" y="0" width="314" height="94" rx="12" fill="#0f172a" stroke="#334155" />
+    <text x="20" y="34" fill="#f8fafc" font-family="Inter, Segoe UI, sans-serif" font-size="19" font-weight="600">Pipeline Checks</text>
+    <text x="20" y="62" fill="#cbd5e1" font-family="Inter, Segoe UI, sans-serif" font-size="16">blend, depth test, resize, readPixels</text>
+  </g>
+</svg>

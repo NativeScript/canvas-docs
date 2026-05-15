@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Canvas Playground</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <h2>Canvas Playground</h2>
+      <ul id="examplesList" class="examples"></ul>
+      <div class="controls">
+        <button id="runBtn">Run</button>
+        <button id="exportBtn">Export to NativeScript</button>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="canvas-wrap">
+        <canvas id="playCanvas"></canvas>
+      </div>
+      <section class="editor">
+        <label for="codeEditor">Code</label>
+        <textarea id="codeEditor" spellcheck="false"></textarea>
+      </section>
+    </main>
+  </div>
+
+  <div id="exportModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>NativeScript Export</h3>
+      <p>Copy the XML and TypeScript into your NativeScript project.</p>
+      <div class="tabs">
+        <button data-tab="xml" class="active">XML</button>
+        <button data-tab="ts">TypeScript</button>
+      </div>
+      <pre id="exportArea" class="exportArea"></pre>
+      <div class="modal-actions">
+        <button id="copyBtn">Copy</button>
+        <button id="downloadBtn">Download</button>
+        <button id="closeModal">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="playground.js"></script>
+</body>
+</html>

@@ -1,0 +1,1284 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --vp-c-brand-1: #F75930;
+  --vp-c-brand-2: #ff6b45;
+  --vp-c-brand-3: #ff7d5c;
+  --vp-c-brand-soft: rgba(247, 89, 48, 0.14);
+  
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(120deg, #F75930 30%, #3B82F6);
+  
+  --vp-home-hero-image-background-image: linear-gradient(-45deg, #F75930 50%, #3B82F6 50%);
+  --vp-home-hero-image-filter: blur(56px);
+}
+
+.dark {
+  --vp-c-brand-1: #ff6b45;
+  --vp-c-brand-2: #ff7d5c;
+  --vp-c-brand-3: #ff8f73;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(247, 89, 48, 0.08), transparent 24%),
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.08), transparent 22%),
+    var(--vp-c-bg);
+}
+
+.dark body {
+  background:
+    radial-gradient(circle at top left, rgba(247, 89, 48, 0.1), transparent 24%),
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.1), transparent 22%),
+    var(--vp-c-bg);
+}
+
+/* Logo styling */
+.VPNavBarTitle .logo {
+  border-radius: 0.8rem;
+}
+
+.VPContent {
+  background: transparent;
+}
+
+.VPNavBar:not(.home) {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+
+.dark .VPNavBar:not(.home) {
+  background: rgba(18, 18, 18, 0.9);
+}
+
+.VPNavBarMenuLink {
+  position: relative;
+  border-radius: 0.6rem;
+  padding: 0.35rem 0.6rem;
+  transition: color 0.25s, background-color 0.25s, transform 0.15s;
+  display: inline-block;
+}
+
+.VPNavBarMenuLink:hover {
+  background: rgba(247, 89, 48, 0.06);
+  transform: translateY(-1px);
+}
+
+.VPNavBarMenuLink.active {
+  background: transparent;
+  color: var(--vp-c-brand-1);
+}
+
+.VPNavBarMenuLink.active::after {
+  content: '';
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  bottom: -8px;
+  height: 3px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #f75930, #3b82f6);
+  opacity: 0.95;
+}
+
+.dark .VPNavBarMenuLink:hover {
+  background: rgba(247, 89, 48, 0.08);
+}
+
+.dark .VPNavBarMenuLink.active::after {
+  background: linear-gradient(90deg, #ff6b45, #ff7d5c);
+}
+
+.DocSearch-Button {
+  border-radius: 9999px;
+}
+
+@media (min-width: 768px) {
+  .DocSearch-Button {
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(248, 250, 252, 0.8);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  }
+
+  .dark .DocSearch-Button {
+    border-color: rgba(71, 85, 105, 0.42);
+    background: rgba(15, 23, 42, 0.78);
+    box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.08);
+  }
+}
+
+.VPSidebar {
+  background: var(--vp-c-bg);
+  border-right: 1px solid var(--vp-c-divider);
+}
+
+.VPSidebarItem.level-0 {
+  padding-bottom: 18px;
+}
+
+.VPSidebarItem.level-0 > .item {
+  margin-left: -8px;
+  border-radius: 1rem;
+  padding: 0.45rem 0.7rem;
+}
+
+.VPSidebarItem.level-0.has-active > .item,
+.VPSidebarItem.level-0.is-active > .item {
+  background: var(--vp-c-default-soft);
+}
+
+.VPSidebarItem.level-1 > .item > .link,
+.VPSidebarItem.level-2 > .item > .link,
+.VPSidebarItem.level-3 > .item > .link,
+.VPSidebarItem.level-4 > .item > .link,
+.VPSidebarItem.level-5 > .item > .link {
+  border-radius: 0.8rem;
+  padding-left: 0.45rem;
+  padding-right: 0.45rem;
+}
+
+.VPSidebarItem.level-1.is-active > .item > .link,
+.VPSidebarItem.level-2.is-active > .item > .link,
+.VPSidebarItem.level-3.is-active > .item > .link,
+.VPSidebarItem.level-4.is-active > .item > .link,
+.VPSidebarItem.level-5.is-active > .item > .link {
+  background: rgba(247, 89, 48, 0.08);
+}
+
+.dark .VPSidebarItem.level-1.is-active > .item > .link,
+.dark .VPSidebarItem.level-2.is-active > .item > .link,
+.dark .VPSidebarItem.level-3.is-active > .item > .link,
+.dark .VPSidebarItem.level-4.is-active > .item > .link,
+.dark .VPSidebarItem.level-5.is-active > .item > .link {
+  background: rgba(247, 89, 48, 0.12);
+}
+
+.VPSidebarItem .items {
+  margin-top: 0.35rem;
+}
+
+
+
+.outline-link:hover,
+.outline-link.active {
+  color: var(--vp-c-brand-1);
+}
+
+
+
+.VPDocFooter {
+  margin-top: 72px;
+}
+
+.VPDocFooter .prev-next {
+  border-top: 0;
+  padding-top: 0;
+  gap: 1rem;
+}
+
+.VPDocFooter .pager-link {
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 0.75rem;
+  transition: border-color 0.25s;
+}
+
+.VPDocFooter .pager-link:hover {
+  border-color: var(--vp-c-brand-1);
+}
+
+.VPDocFooter .desc {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.68rem;
+}
+
+.VPDocFooter .title {
+  margin-top: 0.35rem;
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.VPDoc .content,
+.VPDoc .content-container,
+.VPDoc .main,
+.vp-doc {
+  width: 100%;
+}
+
+/* Scoped landing styles for audio and canvas (no VPDoc toggles) */
+.VPDoc .audio-docs-home .audio-docs-hero,
+.vp-doc .audio-docs-home .audio-docs-hero,
+.VPDoc .canvas-docs-home .canvas-docs-hero,
+.vp-doc .canvas-docs-home .canvas-docs-hero {
+  grid-template-columns: 60% 40%;
+  gap: 2.5rem;
+  padding: 2.5rem 0;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.VPDoc .audio-docs-home .audio-docs-hero__visual,
+.vp-doc .audio-docs-home .audio-docs-hero__visual,
+.VPDoc .canvas-docs-home .canvas-docs-hero__visual,
+.vp-doc .canvas-docs-home .canvas-docs-hero__visual {
+  max-width: none !important;
+  width: 100% !important;
+  justify-self: end !important;
+}
+
+.VPDoc .audio-docs-home .audio-docs-lede,
+.vp-doc .audio-docs-home .audio-docs-lede,
+.VPDoc .canvas-docs-home .canvas-docs-lede,
+.vp-doc .canvas-docs-home .canvas-docs-lede {
+  max-width: none !important;
+}
+
+/* Keep playground container full-width when VPDoc is explicitly marked as a landing page */
+.VPDoc.docs-landing-page .content-container.docs-landing-container {
+  max-width: none !important;
+  width: 100% !important;
+}
+
+/* Audio + Canvas docs landing: keep the sidebar but let the content panel use
+   all of the remaining horizontal space instead of VitePress's default narrow
+   column. Restore comfortable horizontal padding around the hero. */
+.VPDoc.audio-docs-page .content,
+.VPDoc.audio-docs-page .content-container,
+.VPDoc.canvas-docs-page .content,
+.VPDoc.canvas-docs-page .content-container {
+  max-width: none !important;
+  width: 100% !important;
+}
+.VPDoc.audio-docs-page .vp-doc > div,
+.VPDoc.canvas-docs-page .vp-doc > div {
+  max-width: none !important;
+  padding: 24px 32px 64px !important;
+}
+@media (min-width: 1280px) {
+  .VPDoc.audio-docs-page .vp-doc > div,
+  .VPDoc.canvas-docs-page .vp-doc > div {
+    padding: 32px 48px 80px !important;
+  }
+}
+/* (previous VPDoc landing-canvas rules removed; layout now scoped to .vp-doc .canvas-docs-home) */
+
+.VPDoc.docs-landing-page .content,
+.VPDoc.docs-landing-page .main,
+.VPDoc.docs-landing-page .container,
+.VPDoc.docs-landing-page .content-container {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+/* Landing pages (e.g. the Canvas Playground) own the entire viewport area
+   below the nav — zero out VPDoc's default chrome padding so children can
+   actually extend edge-to-edge. */
+.VPDoc.docs-landing-page,
+.VPDoc.docs-landing-page > .container,
+.VPDoc.docs-landing-page > .container > .content,
+.VPDoc.docs-landing-page .vp-doc,
+.VPDoc.docs-landing-page .vp-doc > div {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+.VPDoc.docs-landing-page .vp-doc > div { width: 100%; }
+.VPDoc.docs-landing-page + .VPDocFooter,
+.VPDoc.docs-landing-page .VPDocFooter,
+.VPDoc.docs-landing-page .VPDocAside { display: none; }
+
+/* Strip every element VitePress / markdown might inject above the playground
+   so nothing draws a divider between the nav and the sidebar. */
+.VPDoc.docs-landing-page .vp-doc > div > :not(.canvas-playground) {
+  display: none !important;
+}
+.VPDoc.docs-landing-page .vp-doc > div > h1::before,
+.VPDoc.docs-landing-page .vp-doc > div > h1::after,
+.VPDoc.docs-landing-page .vp-doc > div > h2::before,
+.VPDoc.docs-landing-page .vp-doc > div > h2::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Let the playground sidebar visually join the top nav: drop the nav's
+   bottom border (and its background) when the playground is active so the
+   surfaces flow into each other. Uses an explicit body class set by the
+   CanvasPlayground component for broad browser support. */
+body.canvas-playground-active .VPNavBar:not(.home) {
+  border-bottom-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Standard docs page styling */
+.vp-doc > div > h1:first-child {
+  margin: 0;
+  font-size: clamp(2.5rem, 5vw, 4.25rem);
+  line-height: 0.96;
+  font-weight: 850;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+  color: rgb(15 23 42);
+}
+
+.dark .vp-doc > div > h1:first-child {
+  color: rgb(248 250 252);
+}
+
+.vp-doc > div > h1:first-child::after {
+  content: '';
+  display: block;
+  margin-top: 1rem;
+  width: 5.25rem;
+  height: 0.3rem;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #f75930, #3b82f6);
+}
+
+.vp-doc > div > h1:first-child + p {
+  margin: 1.5rem 0 2.25rem;
+  padding: 1.25rem 1.4rem;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 1.4rem;
+  background:
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.12), transparent 38%),
+    linear-gradient(135deg, rgba(247, 89, 48, 0.08), rgba(255, 255, 255, 0.94));
+  box-shadow: 0 20px 60px -42px rgba(15, 23, 42, 0.55);
+  font-size: 1.08rem;
+  line-height: 1.9;
+  color: rgb(51 65 85);
+  text-wrap: pretty;
+}
+
+.dark .vp-doc > div > h1:first-child + p {
+  border-color: rgba(71, 85, 105, 0.7);
+  background:
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.12), transparent 38%),
+    linear-gradient(135deg, rgba(247, 89, 48, 0.08), rgba(15, 23, 42, 0.9));
+  color: rgb(203 213 225);
+}
+
+.vp-doc > div > h2 {
+  margin: 3.25rem 0 1rem;
+  border-top: 0;
+  padding-top: 0;
+  font-size: clamp(1.55rem, 2vw, 2.1rem);
+  line-height: 1.08;
+}
+
+.vp-doc > div > h2::before {
+  content: '';
+  display: block;
+  margin-bottom: 0.85rem;
+  width: 3.5rem;
+  height: 0.18rem;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, rgba(247, 89, 48, 0.95), rgba(59, 130, 246, 0.45));
+}
+
+.vp-doc > div > h3 {
+  margin-top: 2rem;
+  font-weight: 700;
+  color: rgb(15 23 42);
+}
+
+.dark .vp-doc > div > h3 {
+  color: rgb(248 250 252);
+}
+
+.vp-doc > div > p,
+.vp-doc > div > ul,
+.vp-doc > div > ol,
+.vp-doc > div > table,
+.vp-doc > div > .custom-block,
+.vp-doc > div > div[class*='language-'] {
+  max-width: 100%;
+}
+
+.vp-doc p code,
+.vp-doc li code,
+.vp-doc td code,
+.vp-doc th code {
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 0.65rem;
+  background: rgba(15, 23, 42, 0.045);
+  padding: 0.18rem 0.42rem;
+  font-size: 0.92em;
+}
+
+.dark .vp-doc p code,
+.dark .vp-doc li code,
+.dark .vp-doc td code,
+.dark .vp-doc th code {
+  border-color: rgba(71, 85, 105, 0.7);
+  background: rgba(148, 163, 184, 0.12);
+}
+
+.vp-doc > div > ul,
+.vp-doc > div > ol {
+  display: block;
+  margin: 1.2rem 0;
+  padding-left: 1.25rem;
+}
+
+.vp-doc > div > ul > li,
+.vp-doc > div > ol > li {
+  margin: 0.5rem 0;
+  padding-left: 0.2rem;
+}
+
+.vp-doc > div > ol {
+  counter-reset: docs-ordered-list;
+}
+
+.vp-doc > div > ol > li {
+  counter-increment: docs-ordered-list;
+}
+
+.vp-doc > div > ul > li::marker {
+  color: rgb(247 89 48);
+}
+
+.vp-doc > div > ol > li::marker {
+  color: rgb(247 89 48);
+  font-weight: 700;
+}
+
+.vp-doc > div > ul > li > p:first-child,
+.vp-doc > div > ol > li > p:first-child {
+  margin-top: 0;
+}
+
+.vp-doc > div > ul > li > p:last-child,
+.vp-doc > div > ol > li > p:last-child {
+  margin-bottom: 0;
+}
+
+.vp-doc > div > h2[id='continue'] + ul,
+.vp-doc > div > h2[id='related-docs'] + ul,
+.vp-doc > div > h2[id='sample-guides'] + ul,
+.vp-doc > div > h2[id='recommended-next-step'] + ul {
+  display: grid;
+  gap: 0.9rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.vp-doc > div > h2[id='continue'] + ul > li,
+.vp-doc > div > h2[id='related-docs'] + ul > li,
+.vp-doc > div > h2[id='sample-guides'] + ul > li,
+.vp-doc > div > h2[id='recommended-next-step'] + ul > li {
+  margin: 0;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 1rem;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.85));
+  padding: 0.95rem 1rem;
+  box-shadow: 0 18px 42px -38px rgba(15, 23, 42, 0.45);
+}
+
+.dark .vp-doc > div > h2[id='continue'] + ul > li,
+.dark .vp-doc > div > h2[id='related-docs'] + ul > li,
+.dark .vp-doc > div > h2[id='sample-guides'] + ul > li,
+.dark .vp-doc > div > h2[id='recommended-next-step'] + ul > li {
+  border-color: rgba(71, 85, 105, 0.7);
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(30, 41, 59, 0.82));
+}
+
+.vp-doc > div > h2[id='continue'] + ul > li::marker,
+.vp-doc > div > h2[id='related-docs'] + ul > li::marker,
+.vp-doc > div > h2[id='sample-guides'] + ul > li::marker,
+.vp-doc > div > h2[id='recommended-next-step'] + ul > li::marker {
+  content: '';
+}
+
+[class*='language-'] {
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 1.25rem;
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.94));
+  box-shadow: 0 22px 56px -42px rgba(15, 23, 42, 0.75);
+}
+
+[class*='language-'] pre {
+  padding-top: 1rem;
+}
+
+.vp-doc table {
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 1.1rem;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 22px 56px -44px rgba(15, 23, 42, 0.5);
+}
+
+.dark .vp-doc table {
+  border-color: rgba(71, 85, 105, 0.72);
+  background: rgba(15, 23, 42, 0.78);
+}
+
+.vp-doc th {
+  background: rgba(247, 89, 48, 0.08);
+  color: rgb(15 23 42);
+}
+
+.dark .vp-doc th {
+  background: rgba(247, 89, 48, 0.12);
+  color: rgb(248 250 252);
+}
+
+.vp-doc tr:nth-child(2n) {
+  background: rgba(148, 163, 184, 0.045);
+}
+
+.dark .vp-doc tr:nth-child(2n) {
+  background: rgba(148, 163, 184, 0.06);
+}
+
+/* Code block styling */
+[class*='language-'] {
+  @apply relative my-6;
+}
+
+[class*='language-'] pre {
+  @apply my-0;
+}
+
+[class*='language-'] .lang {
+  @apply absolute right-0 top-0 px-4 pt-2 font-mono text-xs text-gray-500;
+}
+
+/* Custom block styling */
+.custom-block {
+  @apply my-4 overflow-x-auto rounded-lg p-4;
+}
+
+.custom-block.tip {
+  @apply border border-emerald-400 bg-emerald-50 dark:bg-emerald-950/30;
+}
+
+.custom-block.warning {
+  @apply border border-amber-400 bg-amber-50 dark:bg-amber-950/30;
+}
+
+.custom-block.danger {
+  @apply border border-red-400 bg-red-50 dark:bg-red-950/30;
+}
+
+.custom-block.info {
+  @apply border border-blue-400 bg-blue-50 dark:bg-blue-950/30;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Chart showcase animations */
+@keyframes chartDraw {
+  0% {
+    stroke-dasharray: 0, 1000;
+    opacity: 0;
+  }
+  100% {
+    stroke-dasharray: 1000, 0;
+    opacity: 1;
+  }
+}
+
+.animate-chart-draw {
+  animation: chartDraw 2s ease-out forwards;
+}
+
+/* Gradient text helper */
+.gradient-text {
+  @apply bg-clip-text text-transparent;
+  background-image: linear-gradient(to right, #F75930, #3B82F6);
+}
+
+/* Plugin card hover effects */
+.plugin-card {
+  @apply transition-all duration-300;
+}
+
+.plugin-card:hover {
+  @apply -translate-y-1 shadow-xl;
+}
+
+/* Feature grid items */
+.feature-item {
+  @apply relative overflow-hidden rounded-2xl border border-slate-200 bg-white/80 p-6 backdrop-blur-sm transition-all duration-300 dark:border-slate-700 dark:bg-slate-800/80;
+}
+
+.feature-item:hover {
+  @apply border-slate-300 shadow-lg dark:border-slate-600;
+}
+
+.feature-item::before {
+  @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+  content: '';
+  background: linear-gradient(135deg, rgba(247, 89, 48, 0.05) 0%, rgba(59, 130, 246, 0.05) 100%);
+}
+
+.feature-item:hover::before {
+  @apply opacity-100;
+}
+
+.canvas-docs-home {
+  @apply w-full px-4 py-8 md:px-6 lg:px-8;
+}
+
+.canvas-docs-home section + section {
+  @apply mt-10;
+}
+
+.canvas-docs-home h1,
+.canvas-docs-home h2,
+.canvas-docs-home p {
+  @apply m-0;
+}
+
+.canvas-docs-home h1 {
+  @apply font-extrabold tracking-tight text-slate-950 dark:text-white;
+  font-size: clamp(1.8rem, 3vw, 2.75rem);
+  line-height: 1.05;
+  max-width: 8.5ch;
+  text-wrap: pretty;
+}
+
+.canvas-docs-home h1 span {
+  display: block;
+}
+
+.canvas-docs-home h2 {
+  @apply text-2xl font-bold tracking-tight text-slate-950 md:text-3xl dark:text-white;
+}
+
+.canvas-docs-kicker {
+  @apply text-sm font-semibold uppercase tracking-[0.24em] text-orange-600 dark:text-orange-300;
+}
+
+.canvas-docs-lede {
+  @apply mt-5 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-300;
+  text-wrap: pretty;
+}
+
+.canvas-docs-hero {
+  @apply relative grid gap-8 overflow-hidden rounded-[2rem] border border-slate-200 bg-[radial-gradient(circle_at_top_left,_rgba(247,89,48,0.16),_transparent_34%),linear-gradient(135deg,_rgba(255,255,255,0.94),_rgba(239,246,255,0.9))] p-6 shadow-[0_28px_90px_-40px_rgba(15,23,42,0.4)] md:p-8 dark:border-slate-800 dark:bg-[radial-gradient(circle_at_top_left,_rgba(247,89,48,0.18),_transparent_34%),linear-gradient(135deg,_rgba(15,23,42,0.96),_rgba(15,23,42,0.82))];
+
+  grid-template-columns: 40% 55% !important;
+  padding: 2rem !important;
+}
+
+.canvas-docs-hero__copy {
+  @apply relative z-[1] min-w-0;
+}
+
+/* Center hero content and constrain width so it feels balanced in the right panel */
+.canvas-docs-home .canvas-docs-hero,
+.audio-docs-home .audio-docs-hero {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.canvas-docs-chip-row {
+  @apply mt-6 flex flex-wrap gap-3;
+}
+
+.canvas-docs-chip-row span {
+  @apply rounded-full border border-slate-300 bg-white/85 px-4 py-2 text-sm font-medium text-slate-700 backdrop-blur dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-200;
+}
+
+.canvas-docs-actions {
+  @apply mt-8 flex flex-wrap gap-3;
+}
+
+.canvas-docs-button {
+  @apply inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold no-underline transition-transform duration-300;
+}
+
+.canvas-docs-button:hover {
+  @apply -translate-y-0.5;
+}
+
+.canvas-docs-button--primary {
+  @apply bg-slate-950 text-white shadow-lg shadow-orange-500/20 dark:bg-white dark:text-slate-950;
+}
+
+.canvas-docs-button--secondary {
+  @apply border border-slate-300 bg-white/85 text-slate-800 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-100;
+}
+
+.canvas-docs-hero__visual {
+  @apply relative flex min-h-[320px] w-full items-center justify-center justify-self-center;
+  max-width: none;
+}
+
+.canvas-hero-mini-demo {
+  @apply absolute left-0 top-4 h-[190px] w-[290px] overflow-hidden rounded-[1.25rem] border border-white/10 bg-slate-950/80 shadow-2xl shadow-cyan-500/10 backdrop-blur;
+  transform: rotate(-8deg);
+}
+
+.canvas-hero-mini-demo canvas {
+  @apply block h-full w-full;
+}
+
+.canvas-orbit {
+  @apply absolute rounded-full border border-orange-300/60 dark:border-orange-400/25;
+  animation: canvasOrbitPulse 7s ease-in-out infinite;
+}
+
+.canvas-orbit--large {
+  width: min(28vw, 360px);
+  height: min(28vw, 360px);
+}
+
+.canvas-orbit--small {
+  width: min(18vw, 220px);
+  height: min(18vw, 220px);
+  animation-delay: -2s;
+}
+
+.canvas-render-card {
+  @apply relative w-full max-w-[420px] overflow-hidden rounded-[1.75rem] border border-white/60 bg-slate-950 p-4 shadow-2xl shadow-orange-500/15;
+  transform: perspective(1200px) rotateY(-14deg) rotateX(7deg);
+}
+
+.canvas-render-card__header {
+  @apply flex gap-2;
+}
+
+.canvas-render-card__header span {
+  @apply h-3 w-3 rounded-full;
+}
+
+.canvas-render-card__header span:nth-child(1) {
+  @apply bg-rose-400;
+}
+
+.canvas-render-card__header span:nth-child(2) {
+  @apply bg-amber-300;
+}
+
+.canvas-render-card__header span:nth-child(3) {
+  @apply bg-emerald-400;
+}
+
+.canvas-render-card__body {
+  @apply relative mt-4 h-[260px] overflow-hidden rounded-[1.25rem] border border-white/10 bg-slate-900;
+}
+
+.canvas-render-card__gradient {
+  @apply absolute inset-x-0 top-0 h-32;
+  background: radial-gradient(circle at top, rgba(56, 189, 248, 0.45), transparent 60%),
+    linear-gradient(135deg, rgba(247, 89, 48, 0.28), rgba(59, 130, 246, 0.2));
+}
+
+.canvas-render-card__grid {
+  @apply absolute inset-0 opacity-50;
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.14) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.canvas-render-card__curve {
+  @apply absolute left-6 right-6 rounded-full border;
+}
+
+.canvas-render-card__curve--one {
+  top: 92px;
+  height: 92px;
+  border-color: rgba(251, 146, 60, 0.9);
+}
+
+.canvas-render-card__curve--two {
+  top: 132px;
+  height: 76px;
+  border-color: rgba(56, 189, 248, 0.85);
+}
+
+.canvas-render-card__label {
+  @apply absolute bottom-5 right-5 rounded-full border border-white/10 bg-white/10 px-3 py-1 text-xs font-semibold tracking-[0.18em] text-slate-100 backdrop-blur;
+}
+
+.canvas-docs-stats {
+  @apply grid gap-4 md:grid-cols-3;
+}
+
+.canvas-docs-stats div {
+  @apply rounded-[1.5rem] border border-slate-200 bg-white/85 p-5 backdrop-blur dark:border-slate-800 dark:bg-slate-900/75;
+}
+
+.canvas-docs-stats strong {
+  @apply block text-3xl font-extrabold text-slate-950 dark:text-white;
+}
+
+.canvas-docs-stats span {
+  @apply mt-2 block text-sm leading-6 text-slate-600 dark:text-slate-300;
+}
+
+.canvas-docs-feature-grid {
+  @apply mt-6 grid gap-4 md:grid-cols-3;
+}
+
+.canvas-docs-feature-item {
+  @apply p-6;
+}
+
+.canvas-docs-feature-item h3 {
+  @apply mt-4 text-xl font-bold text-slate-950 dark:text-white;
+}
+
+.canvas-docs-feature-item p {
+  @apply mt-2 leading-7 text-slate-600 dark:text-slate-300;
+}
+
+.canvas-docs-feature-icon {
+  @apply inline-flex min-w-[3.75rem] items-center justify-center rounded-xl px-3 py-3 text-sm font-extrabold uppercase tracking-[0.18em] text-white;
+}
+
+.canvas-docs-feature-icon--orange {
+  @apply bg-gradient-to-br from-orange-500 to-amber-400;
+}
+
+.canvas-docs-feature-icon--blue {
+  @apply bg-gradient-to-br from-blue-500 to-cyan-400;
+}
+
+.canvas-docs-feature-icon--green {
+  @apply bg-gradient-to-br from-emerald-500 to-teal-400;
+}
+
+.canvas-docs-band {
+  @apply grid gap-6 rounded-[1.75rem] border border-slate-200 bg-slate-950 px-6 py-7 text-white md:grid-cols-[minmax(0,1fr)_minmax(260px,0.9fr)] md:px-8 dark:border-slate-700;
+}
+
+.canvas-docs-band p:not(.canvas-docs-kicker) {
+  @apply mt-3 max-w-2xl leading-7 text-slate-300;
+}
+
+.canvas-docs-stack {
+  @apply m-0 grid list-none gap-3 p-0;
+}
+
+.canvas-docs-stack li {
+  @apply flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-4;
+}
+
+.canvas-docs-stack strong {
+  @apply text-sm font-semibold uppercase tracking-[0.18em] text-orange-300;
+}
+
+.canvas-docs-stack span {
+  @apply text-right text-sm leading-6 text-slate-300;
+}
+
+.canvas-docs-link-grid {
+  @apply mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3;
+}
+
+.canvas-docs-link-grid a {
+  @apply relative block overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white/90 p-5 no-underline transition-all duration-300 dark:border-slate-800 dark:bg-slate-900/75;
+}
+
+.canvas-docs-link-grid a:hover {
+  @apply -translate-y-1 border-slate-300 shadow-xl dark:border-slate-700;
+}
+
+.canvas-docs-link-grid a::before {
+  @apply absolute inset-x-0 top-0 h-1 opacity-80;
+  content: '';
+  background: linear-gradient(90deg, #f75930, #3b82f6);
+}
+
+.canvas-docs-link-grid strong {
+  @apply block text-lg font-semibold text-slate-950 dark:text-white;
+}
+
+.canvas-docs-link-grid span {
+  @apply mt-2 block leading-7 text-slate-600 dark:text-slate-300;
+}
+
+.audio-docs-home {
+  @apply w-full px-4 py-8 md:px-6 lg:px-8;
+}
+
+.audio-docs-home section + section {
+  @apply mt-10;
+}
+
+.audio-docs-home h1,
+.audio-docs-home h2,
+.audio-docs-home p {
+  @apply m-0;
+}
+
+.audio-docs-home h1 {
+  @apply font-extrabold tracking-tight text-slate-950 dark:text-white;
+  font-size: clamp(1.8rem, 3vw, 2.75rem);
+  line-height: 1.05;
+  text-wrap: balance;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+.audio-docs-home h2 {
+  @apply text-2xl font-bold tracking-tight text-slate-950 md:text-3xl dark:text-white;
+}
+
+.audio-docs-kicker {
+  @apply text-sm font-semibold uppercase tracking-[0.24em] text-cyan-600 dark:text-cyan-300;
+}
+
+.audio-docs-lede {
+  @apply mt-5 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-300;
+  text-wrap: pretty;
+}
+
+.audio-docs-hero {
+  @apply relative grid gap-8 overflow-hidden rounded-[2rem] border border-slate-200 bg-[radial-gradient(circle_at_top_right,_rgba(6,182,212,0.18),_transparent_34%),linear-gradient(135deg,_rgba(255,255,255,0.95),_rgba(238,242,255,0.92))] p-6 shadow-[0_28px_90px_-40px_rgba(15,23,42,0.35)] md:p-8 dark:border-slate-800 dark:bg-[radial-gradient(circle_at_top_right,_rgba(6,182,212,0.18),_transparent_34%),linear-gradient(135deg,_rgba(15,23,42,0.96),_rgba(17,24,39,0.84))];
+
+  grid-template-columns: 40% 55% !important;
+  padding: 2rem !important;
+}
+
+.audio-docs-hero__copy {
+  @apply relative z-[1] min-w-0;
+}
+
+.audio-docs-chip-row {
+  @apply mt-6 flex flex-wrap gap-3;
+}
+
+.audio-docs-chip-row span {
+  @apply rounded-full border border-slate-300 bg-white/85 px-4 py-2 text-sm font-medium text-slate-700 backdrop-blur dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-200;
+}
+
+.audio-docs-actions {
+  @apply mt-8 flex flex-wrap gap-3;
+}
+
+.audio-docs-button {
+  @apply inline-flex items-center justify-center rounded-full px-5 py-3 text-sm font-semibold no-underline transition-transform duration-300;
+}
+
+.audio-docs-button:hover {
+  @apply -translate-y-0.5;
+}
+
+.audio-docs-button--primary {
+  @apply bg-slate-950 text-white shadow-lg shadow-cyan-500/20 dark:bg-white dark:text-slate-950;
+}
+
+.audio-docs-button--secondary {
+  @apply border border-slate-300 bg-white/85 text-slate-800 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-100;
+}
+
+.audio-docs-hero__visual {
+  @apply relative min-h-[320px] w-full overflow-hidden rounded-[1.75rem] border border-white/40 bg-slate-950/95 p-6 justify-self-center;
+  max-width: none;
+}
+
+.audio-node {
+  @apply absolute z-[1] inline-flex items-center justify-center rounded-full border px-4 py-2 text-sm font-semibold uppercase tracking-[0.18em] text-white backdrop-blur;
+}
+
+.audio-node--input {
+  @apply left-6 top-12 border-cyan-300/40 bg-cyan-500/20;
+}
+
+.audio-node--fx {
+  @apply right-12 top-24 border-fuchsia-300/40 bg-fuchsia-500/20;
+}
+
+.audio-node--output {
+  @apply bottom-14 left-1/2 border-emerald-300/40 bg-emerald-500/20;
+  transform: translateX(-50%);
+}
+
+.audio-link {
+  @apply absolute border border-dashed border-white/25;
+}
+
+.audio-link--one {
+  left: 88px;
+  top: 70px;
+  width: calc(100% - 182px);
+  height: 86px;
+  border-left: 0;
+  border-bottom: 0;
+  border-radius: 0 999px 0 0;
+}
+
+.audio-link--two {
+  left: 50%;
+  top: 116px;
+  width: 128px;
+  height: 112px;
+  border-top: 0;
+  border-right: 0;
+  border-radius: 0 0 0 999px;
+  transform: translateX(-50%);
+}
+
+.audio-wave {
+  @apply absolute left-6 right-6 rounded-full border;
+  animation: audioWaveFloat 4.2s ease-in-out infinite;
+}
+
+.audio-wave--one {
+  top: 148px;
+  height: 82px;
+  border-color: rgba(34, 211, 238, 0.75);
+}
+
+.audio-wave--two {
+  top: 182px;
+  height: 58px;
+  border-color: rgba(232, 121, 249, 0.6);
+  animation-delay: -1.4s;
+}
+
+.audio-docs-stats {
+  @apply grid gap-4 md:grid-cols-3;
+}
+
+.audio-docs-stats div {
+  @apply rounded-[1.5rem] border border-slate-200 bg-white/85 p-5 backdrop-blur dark:border-slate-800 dark:bg-slate-900/75;
+}
+
+.audio-docs-stats strong {
+  @apply block text-3xl font-extrabold text-slate-950 dark:text-white;
+}
+
+.audio-docs-stats span {
+  @apply mt-2 block text-sm leading-6 text-slate-600 dark:text-slate-300;
+}
+
+.audio-docs-feature-grid {
+  @apply mt-6 grid gap-4 md:grid-cols-3;
+}
+
+.audio-docs-feature-item {
+  @apply p-6;
+}
+
+.audio-docs-feature-item h3 {
+  @apply mt-4 text-xl font-bold text-slate-950 dark:text-white;
+}
+
+.audio-docs-feature-item p {
+  @apply mt-2 leading-7 text-slate-600 dark:text-slate-300;
+}
+
+.audio-docs-feature-icon {
+  @apply inline-flex min-w-[3.75rem] items-center justify-center rounded-xl px-3 py-3 text-sm font-extrabold uppercase tracking-[0.18em] text-white;
+}
+
+.audio-docs-feature-icon--rose {
+  @apply bg-gradient-to-br from-fuchsia-500 to-rose-400;
+}
+
+.audio-docs-feature-icon--sky {
+  @apply bg-gradient-to-br from-sky-500 to-cyan-400;
+}
+
+.audio-docs-feature-icon--emerald {
+  @apply bg-gradient-to-br from-emerald-500 to-teal-400;
+}
+
+.audio-docs-band {
+  @apply grid gap-6 rounded-[1.75rem] border border-slate-200 bg-slate-950 px-6 py-7 text-white md:grid-cols-[minmax(0,1fr)_minmax(260px,0.9fr)] md:px-8 dark:border-slate-700;
+}
+
+.audio-docs-band p:not(.audio-docs-kicker) {
+  @apply mt-3 max-w-2xl leading-7 text-slate-300;
+}
+
+.audio-docs-stack {
+  @apply m-0 grid list-none gap-3 p-0;
+}
+
+.audio-docs-stack li {
+  @apply flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-4;
+}
+
+.audio-docs-stack strong {
+  @apply text-sm font-semibold uppercase tracking-[0.18em] text-cyan-300;
+}
+
+.audio-docs-stack span {
+  @apply text-right text-sm leading-6 text-slate-300;
+}
+
+.audio-docs-link-grid {
+  @apply mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3;
+}
+
+.audio-docs-link-grid a {
+  @apply relative block overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white/90 p-5 no-underline transition-all duration-300 dark:border-slate-800 dark:bg-slate-900/75;
+}
+
+.audio-docs-link-grid a:hover {
+  @apply -translate-y-1 border-slate-300 shadow-xl dark:border-slate-700;
+}
+
+.audio-docs-link-grid a::before {
+  @apply absolute inset-x-0 top-0 h-1 opacity-80;
+  content: '';
+  background: linear-gradient(90deg, #06b6d4, #e879f9);
+}
+
+.audio-docs-link-grid strong {
+  @apply block text-lg font-semibold text-slate-950 dark:text-white;
+}
+
+.audio-docs-link-grid span {
+  @apply mt-2 block leading-7 text-slate-600 dark:text-slate-300;
+}
+
+@keyframes canvasOrbitPulse {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 0.55;
+  }
+
+  50% {
+    transform: scale(1.06) rotate(10deg);
+    opacity: 1;
+  }
+}
+
+@keyframes audioWaveFloat {
+  0%,
+  100% {
+    transform: translateY(0) scaleX(1);
+    opacity: 0.75;
+  }
+
+  50% {
+    transform: translateY(-10px) scaleX(0.98);
+    opacity: 1;
+  }
+}
+
+@media (min-width: 1280px) {
+  .canvas-docs-hero {
+    grid-template-columns: minmax(0, 1.18fr) minmax(320px, 0.82fr);
+    align-items: center;
+  }
+
+  .canvas-docs-hero__visual {
+    justify-self: end;
+  }
+
+  .audio-docs-hero {
+    grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
+    align-items: center;
+  }
+
+  .audio-docs-hero__visual {
+    justify-self: end;
+  }
+}
+
+/* (previous VPDoc landing-audio rules removed; layout now scoped to .vp-doc .audio-docs-home) */
+
+@media (max-width: 1279px) {
+  .canvas-docs-hero,
+  .audio-docs-hero {
+    gap: 2rem;
+  }
+
+  .canvas-docs-hero__visual,
+  .audio-docs-hero__visual {
+    margin-inline: auto;
+  }
+
+  .canvas-render-card {
+    max-width: min(100%, 25rem);
+  }
+
+  .canvas-hero-mini-demo {
+    width: min(72%, 18rem);
+    height: 11rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .canvas-docs-home,
+  .audio-docs-home {
+    @apply px-4 py-6;
+  }
+
+  .canvas-docs-hero,
+  .audio-docs-hero {
+    @apply rounded-[1.5rem] p-5;
+  }
+
+  .canvas-docs-kicker,
+  .audio-docs-kicker {
+    letter-spacing: 0.18em;
+  }
+
+  .canvas-docs-actions,
+  .audio-docs-actions {
+    @apply grid grid-cols-1;
+  }
+
+  .canvas-docs-button,
+  .audio-docs-button {
+    @apply w-full;
+  }
+
+  .canvas-docs-chip-row span,
+  .audio-docs-chip-row span {
+    @apply text-xs;
+  }
+
+  .canvas-hero-mini-demo {
+    @apply relative left-auto top-auto mt-4 h-[170px] w-full;
+    transform: none;
+  }
+
+  .canvas-docs-hero__visual {
+    min-height: 0;
+  }
+
+  .canvas-render-card {
+    transform: none;
+  }
+
+  .canvas-docs-stack li {
+    @apply items-start;
+  }
+
+  .canvas-docs-stack span {
+    @apply text-left;
+  }
+
+  .audio-docs-stack li {
+    @apply items-start;
+  }
+
+  .audio-docs-stack span {
+    @apply text-left;
+  }
+
+  .audio-docs-hero__visual {
+    min-height: 280px;
+  }
+
+  .audio-node {
+    @apply px-3 py-1.5 text-xs;
+  }
+
+  .audio-link--one {
+    left: 72px;
+    width: calc(100% - 142px);
+  }
+}
