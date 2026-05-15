@@ -1,5 +1,5 @@
 <template>
-  <div ref="rootRef" class="canvas-playground app">
+  <div ref="rootRef" class="canvas-playground app" :class="{ 'is-dark': isDarkMode }">
     <aside class="sidebar">
       <header class="sidebar-head">
         <div class="title-row">
@@ -88,17 +88,53 @@
 
     <div v-show="modalVisible" id="exportModal" class="modal" @click.self="closeModal">
       <div class="modal-content">
-        <h3>Export to NativeScript</h3>
-        <p class="muted">Drop these files into a NativeScript project (Core, with <code>@nativescript/canvas</code> installed) and route to the page.</p>
-        <div class="tabs">
-          <button :class="{ active: exportTab === 'xml' }" @click="setExportTab('xml')">main-page.xml</button>
-          <button :class="{ active: exportTab === 'ts' }" @click="setExportTab('ts')">main-page.ts</button>
+        <div class="modal-header">
+          <div class="modal-copy">
+            <h3>Export to NativeScript</h3>
+            <p class="muted">Drop {{ exportFileCopy.item }} into a NativeScript {{ exportFramework }} project with <code>@nativescript/canvas</code> installed and wire {{ exportFileCopy.pronoun }} into your page route.</p>
+          </div>
+          <button class="modal-close" type="button" aria-label="Close export modal" @click="closeModal">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.29 19.7 2.88 18.3 9.17 12 2.88 5.71 4.29 4.29l6.3 6.3 6.29-6.3z"/></svg>
+          </button>
         </div>
-        <pre id="exportArea" class="exportArea">{{ exportContent }}</pre>
+        <div class="framework-switcher" role="tablist" aria-label="Export framework flavor">
+          <button
+            v-for="framework in exportFrameworks"
+            :key="framework"
+            :class="['framework-switcher-button', { active: exportFramework === framework }]"
+            type="button"
+            @click="setExportFramework(framework)"
+          >
+            {{ framework }}
+          </button>
+        </div>
+        <div class="modal-toolbar">
+          <div class="tabs">
+            <button
+              v-for="file in exportFiles"
+              :key="file.id"
+              :class="{ active: exportTab === file.id }"
+              type="button"
+              @click="setExportTab(file.id)"
+            >
+              {{ file.label }}
+            </button>
+          </div>
+          <span class="export-kind">{{ currentExportKind }}</span>
+        </div>
+        <div id="exportArea" class="exportArea" v-html="exportHighlightedHtml"></div>
         <div class="modal-actions">
-          <button @click="copyExport">Copy</button>
-          <button @click="downloadExport">Download both</button>
-          <button class="ghost" @click="closeModal">Close</button>
+          <p class="modal-note">{{ currentExportNote }}</p>
+          <div class="modal-action-group">
+            <button class="secondary" @click="copyExport">
+              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v12h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+              Copy code
+            </button>
+            <button class="primary" @click="downloadExport">
+              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M5 20h14v-2H5v2zm7-16-5 5h3v6h4V9h3l-5-5z"/></svg>
+              {{ downloadLabel }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -3090,8 +3126,18 @@ const canvas = ref(null);
 const canvasKey = ref(0);
 const codeEditor = ref(null);
 const modalVisible = ref(false);
-const exportTab = ref('xml');
-const exportContent = ref('');
+const exportFrameworks = ['Angular', 'React', 'Vue', 'Svelte', 'Solid'];
+const EXPORT_FRAMEWORK_STORAGE_KEY = 'nativescript-docs-framework';
+function getStoredExportFramework(){
+  if (typeof window !== 'undefined') {
+    const stored = window.localStorage.getItem(EXPORT_FRAMEWORK_STORAGE_KEY);
+    if (exportFrameworks.includes(stored)) return stored;
+  }
+  return 'Angular';
+}
+const exportFramework = ref(getStoredExportFramework());
+const exportTab = ref('');
+const exportHighlightedHtml = ref('');
 const runError = ref('');
 const highlightedHtml = ref('');
 const lineCount = computed(() => Math.max(1, (code.value.match(/\n/g)?.length ?? 0) + 1));
@@ -3099,16 +3145,64 @@ let currentCleanup = null;
 let runToken = 0;
 let highlighter = null;
 let highlightTimer = null;
+let exportHighlightTimer = null;
+const EXAMPLE_QUERY_PARAM = 'example';
+const isDarkMode = ref(typeof document !== 'undefined' && document.documentElement.classList.contains('dark'));
+const currentHighlightTheme = computed(() => (isDarkMode.value ? 'github-dark' : 'github-light'));
+const exportFiles = computed(() => generateExportBundle(currentExample.value, exportFramework.value));
+const activeExportFile = computed(() => exportFiles.value.find(file => file.id === exportTab.value) || exportFiles.value[0] || null);
+const exportContent = computed(() => activeExportFile.value?.content || '');
+const currentExportLanguage = computed(() => activeExportFile.value?.language || 'typescript');
+const currentExportKind = computed(() => activeExportFile.value?.kind || 'Component file');
+const currentExportNote = computed(() => activeExportFile.value?.note || 'Use this export as the starting point for your framework integration.');
+const downloadLabel = computed(() => exportFiles.value.length > 1 ? 'Download all files' : 'Download file');
+const exportFileCopy = computed(() => ({
+  item: exportFiles.value.length > 1 ? 'these files' : 'this file',
+  pronoun: exportFiles.value.length > 1 ? 'them' : 'it',
+}));
+let themeObserver = null;
+let frameworkChangeHandler = null;
 
 // AsyncFunction constructor — supports top-level await in user code.
 const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+
+function escapeHtml(value){
+  return (value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function syncThemeMode(){
+  if (typeof document === 'undefined') return;
+  isDarkMode.value = document.documentElement.classList.contains('dark');
+}
+
+function setExportFramework(framework){
+  if (!exportFrameworks.includes(framework) || exportFramework.value === framework) return;
+  exportFramework.value = framework;
+  if (typeof window !== 'undefined') {
+    window.localStorage.setItem(EXPORT_FRAMEWORK_STORAGE_KEY, framework);
+    window.dispatchEvent(new CustomEvent('framework-change', { detail: framework }));
+  }
+}
+
+watch(exportFiles, (files) => {
+  if (!files.length) {
+    exportTab.value = '';
+    return;
+  }
+  if (!files.some(file => file.id === exportTab.value)) {
+    exportTab.value = files[0].id;
+  }
+}, { immediate: true });
 
 // ---------- syntax highlighter ----------
 async function ensureHighlighter(){
   if (highlighter) return highlighter;
   highlighter = await createHighlighter({
-    themes: ['github-dark'],
-    langs: ['javascript'],
+    themes: ['github-dark', 'github-light'],
+    langs: ['javascript', 'typescript', 'xml', 'html', 'tsx', 'vue', 'svelte'],
   });
   return highlighter;
 }
@@ -3117,10 +3211,7 @@ function renderHighlight(){
   if (!highlighter) {
     // Fallback: plain text inside a <pre> so widths still match the textarea
     // until the highlighter finishes loading.
-    const esc = (code.value || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+    const esc = escapeHtml(code.value || '');
     highlightedHtml.value = `<pre><code>${esc}</code></pre>`;
     return;
   }
@@ -3129,7 +3220,20 @@ function renderHighlight(){
   const src = (code.value || '') + '\n';
   highlightedHtml.value = highlighter.codeToHtml(src, {
     lang: 'javascript',
-    theme: 'github-dark',
+    theme: currentHighlightTheme.value,
+  });
+}
+
+function renderExportHighlight(){
+  if (!highlighter) {
+    const esc = escapeHtml(exportContent.value || '');
+    exportHighlightedHtml.value = `<pre><code>${esc}</code></pre>`;
+    return;
+  }
+  const src = (exportContent.value || '') + '\n';
+  exportHighlightedHtml.value = highlighter.codeToHtml(src, {
+    lang: currentExportLanguage.value,
+    theme: currentHighlightTheme.value,
   });
 }
 
@@ -3138,7 +3242,13 @@ function scheduleHighlight(){
   highlightTimer = requestAnimationFrame(renderHighlight);
 }
 
-watch(code, scheduleHighlight, { flush: 'post' });
+function scheduleExportHighlight(){
+  if (exportHighlightTimer) cancelAnimationFrame(exportHighlightTimer);
+  exportHighlightTimer = requestAnimationFrame(renderExportHighlight);
+}
+
+watch([code, currentHighlightTheme], scheduleHighlight, { flush: 'post' });
+watch([exportContent, currentExportLanguage, currentHighlightTheme], scheduleExportHighlight, { flush: 'post' });
 
 // ---------- editor interactions ----------
 function syncScroll(){
@@ -3174,11 +3284,40 @@ function onTab(e){
   nextTick(() => { ta.selectionStart = ta.selectionEnd = start + indent.length; });
 }
 
-function selectExample(id){
+function findExample(id){
+  return examples.find(e => e.id === id) || null;
+}
+
+function syncSelectedExampleToUrl(id, { replace = false } = {}){
+  if (typeof window === 'undefined') return;
+  const url = new URL(window.location.href);
+  if (url.searchParams.get(EXAMPLE_QUERY_PARAM) === id) return;
+  url.searchParams.set(EXAMPLE_QUERY_PARAM, id);
+  const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+  const method = replace ? 'replaceState' : 'pushState';
+  window.history[method](window.history.state, '', nextUrl);
+}
+
+function resolveExampleFromUrl(){
+  if (typeof window === 'undefined') return examples[0] || null;
+  const id = new URL(window.location.href).searchParams.get(EXAMPLE_QUERY_PARAM);
+  return findExample(id) || examples[0] || null;
+}
+
+function ensureExampleIsVisible(example){
+  if (!example) return;
+  if (selectedCategory.value !== 'all' && selectedCategory.value !== example.category) {
+    selectedCategory.value = 'all';
+  }
+}
+
+function selectExample(id, { syncUrl = true, replaceUrl = false } = {}){
   const ex = examples.find(e => e.id === id);
   if (!ex) return;
+  ensureExampleIsVisible(ex);
   currentExample.value = ex;
   code.value = ex.code;
+  if (syncUrl) syncSelectedExampleToUrl(ex.id, { replace: replaceUrl });
   nextTick(runSelected);
 }
 
@@ -3189,7 +3328,9 @@ function resetCode(){
 
 watch(selectedCategory, () => {
   const list = filteredExamples.value;
-  if (list.length) selectExample(list[0].id);
+  if (!list.length) return;
+  if (list.some(ex => ex.id === currentExample.value.id)) return;
+  selectExample(list[0].id);
 });
 
 function stopCurrent(){
@@ -3257,100 +3398,366 @@ async function runSelected(){
 // ---------- NativeScript export ----------
 function escapeBackticks(s){ return s.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${'); }
 
-function generateExport(example){
-  const xml = `<Page xmlns="http://schemas.nativescript.org/tns.xsd" loaded="onLoaded" navigatedFrom="onNavigatedFrom">
-  <GridLayout rows="*">
-    <Canvas id="canvas" row="0" ready="onCanvasReady" />
-  </GridLayout>
-</Page>
-`;
-
-  const ctxType = example.contextType;
-  // For three.js / pixi.js samples, rewrite the playground's CDN dynamic import
-  // into a regular package import so it works in a NativeScript project, and
-  // pull in the canvas polyfill / adapter the libraries need on NativeScript.
-  let userCode = example.code;
-  const extraImports = [];
-  const installNotes = [];
-  if (example.category === 'three') {
-    userCode = userCode.replace(
-      /await import\(['"]https:\/\/esm\.sh\/three[^'"]*['"]\)/g,
-      "await import(\"three\")"
-    );
-    // The polyfill registers the browser-style globals (window, document,
-    // requestAnimationFrame, Image, etc.) that three.js expects. It MUST be
-    // imported before three.js is loaded.
-    extraImports.push('import "@nativescript/canvas-polyfill";');
-    installNotes.push("// 1. npm install three @nativescript/canvas @nativescript/canvas-polyfill");
-    installNotes.push("//    (canvas-polyfill registers the DOM/raf shims three.js needs)");
-  } else if (example.category === 'pixi') {
-    userCode = userCode.replace(
-      /await import\(['"]https:\/\/esm\.sh\/pixi\.js[^'"]*['"]\)/g,
-      "await import(\"pixi.js\")"
-    );
-    // canvas-pixi ships a Pixi adapter tailored for @nativescript/canvas.
-    extraImports.push('import "@nativescript/canvas-pixi";');
-    installNotes.push("// 1. npm install pixi.js @nativescript/canvas @nativescript/canvas-pixi");
-    installNotes.push("//    (canvas-pixi installs the Pixi adapter for @nativescript/canvas)");
-  } else {
-    installNotes.push("// 1. npm install @nativescript/canvas");
-  }
-  installNotes.push("// 2. Drop main-page.xml + main-page.ts into your app and route to it.");
-
-  const codeEsc = escapeBackticks(userCode);
-
-  const ts = `import { EventData, Page } from "@nativescript/core";
-import "@nativescript/canvas";
-${extraImports.join("\n")}${extraImports.length ? "\n" : ""}
-// Generated by the Canvas Playground.
-// Sample: ${example.title} (${example.category})
-${installNotes.join("\n")}
-
-const USER_CODE = \`${codeEsc}\`;
-
-let cleanup: (() => void) | null = null;
-
-export function onLoaded(args: EventData) {
-  // no-op; setup happens in onCanvasReady where the canvas is ready to vend a context.
+function toPascalCase(value){
+  return String(value || '')
+    .split(/[^a-zA-Z0-9]+/)
+    .filter(Boolean)
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('');
 }
 
-export async function onCanvasReady(args: any) {
-  const canvas: any = args.object;
-  const dpr = (global as any).__dpr || 1;
+function toKebabCase(value){
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'canvas-sample';
+}
 
-  // Only create the 2D context up-front for 2D samples; GL/GPU samples grab their own.
+function mimeForLanguage(language){
+  return {
+    html: 'text/html',
+    xml: 'application/xml',
+    typescript: 'text/typescript',
+    tsx: 'text/typescript',
+    vue: 'text/plain',
+    svelte: 'text/plain',
+  }[language] || 'text/plain';
+}
+
+function buildExportHeader(example, framework, installNotes){
+  return [
+    '// Generated by the Canvas Playground.',
+    `// Sample: ${example.title} (${example.category})`,
+    `// Framework: ${framework}`,
+    ...installNotes,
+  ].join('\n');
+}
+
+function buildRunnerSource(userCode, ctxType){
+  return `const USER_CODE = \`${escapeBackticks(userCode)}\`;
+
+async function runCanvasSample(canvas: any) {
+  if (!canvas) return null;
+  const dpr = (globalThis as any).devicePixelRatio || 1;
   const ctx = ${JSON.stringify(ctxType)} === "2d" ? canvas.getContext("2d") : null;
 
   try {
     const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor as any;
     const fn = new AsyncFunction("canvas", "ctx", "dpr", USER_CODE);
     const result = await fn(canvas, ctx, dpr);
-    if (typeof result === "function") cleanup = result as () => void;
+    return typeof result === "function" ? (result as () => void) : null;
   } catch (err) {
     console.log("Canvas sample error:", err);
+    return null;
+  }
+}`;
+}
+
+function prepareExportAssets(example, framework){
+  let userCode = example.code;
+  const extraImports = [];
+  const installNotes = [
+    `// Ensure @nativescript/canvas is installed in your NativeScript ${framework} app.`,
+  ];
+
+  if (example.category === 'three') {
+    userCode = userCode.replace(
+      /await import\(['"]https:\/\/esm\.sh\/three[^'"]*['"]\)/g,
+      'await import("three")'
+    );
+    extraImports.push('import "@nativescript/canvas-polyfill";');
+    installNotes.push('// Also install three and @nativescript/canvas-polyfill before using this sample.');
+  } else if (example.category === 'pixi') {
+    userCode = userCode.replace(
+      /await import\(['"]https:\/\/esm\.sh\/pixi\.js[^'"]*['"]\)/g,
+      'await import("pixi.js")'
+    );
+    extraImports.push('import "@nativescript/canvas-pixi";');
+    installNotes.push('// Also install pixi.js and @nativescript/canvas-pixi before using this sample.');
+  }
+
+  const slug = toKebabCase(example.id);
+  const componentName = `${toPascalCase(example.id)}CanvasSample`;
+
+  return {
+    slug,
+    componentName,
+    extraImportsText: extraImports.join('\n'),
+    header: buildExportHeader(example, framework, installNotes),
+    runner: buildRunnerSource(userCode, example.contextType),
+  };
+}
+
+function createAngularExport(example, assets){
+  const templateFile = `${assets.slug}.component.html`;
+  const scriptFile = `${assets.slug}.component.ts`;
+  const extraImportsBlock = assets.extraImportsText ? `${assets.extraImportsText}\n` : '';
+  const template = `<GridLayout rows="*">
+  <Canvas #canvas row="0"></Canvas>
+</GridLayout>
+`;
+  const script = `import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from "@angular/core";
+import "@nativescript/canvas";
+${extraImportsBlock}${assets.header}
+
+${assets.runner}
+
+@Component({
+  selector: "ns-${assets.slug}-canvas-sample",
+  templateUrl: "./${templateFile}",
+})
+export class ${assets.componentName}Component implements AfterViewInit, OnDestroy {
+  @ViewChild("canvas", { static: false }) canvasRef?: ElementRef<any>;
+  private cleanup: (() => void) | null = null;
+
+  async ngAfterViewInit() {
+    this.cleanup = await runCanvasSample(this.canvasRef?.nativeElement);
+  }
+
+  ngOnDestroy() {
+    if (this.cleanup) { try { this.cleanup(); } catch (e) {} this.cleanup = null; }
+  }
+}
+`;
+  return [
+    {
+      id: templateFile,
+      label: templateFile,
+      filename: templateFile,
+      language: 'html',
+      kind: 'Component template',
+      note: 'Use this Angular template alongside the component class in the same routed page.',
+      mime: mimeForLanguage('html'),
+      content: template,
+    },
+    {
+      id: scriptFile,
+      label: scriptFile,
+      filename: scriptFile,
+      language: 'typescript',
+      kind: 'Component logic',
+      note: 'Use this Angular component class with the template and declare it in the route or feature module where you want the sample to render.',
+      mime: mimeForLanguage('typescript'),
+      content: script,
+    },
+  ];
+}
+
+function createReactExport(example, assets){
+  const filename = `${assets.slug}.react.tsx`;
+  const extraImportsBlock = assets.extraImportsText ? `${assets.extraImportsText}\n` : '';
+  const content = `import * as React from "react";
+import "@nativescript/canvas";
+${extraImportsBlock}${assets.header}
+
+${assets.runner}
+
+const GridLayout: any = "gridLayout";
+const CanvasView: any = "Canvas";
+
+export function ${assets.componentName}() {
+  const canvasRef = React.useRef<any>(null);
+  const cleanupRef = React.useRef<(() => void) | null>(null);
+
+  React.useEffect(() => {
+    let disposed = false;
+
+    void (async () => {
+      const cleanup = await runCanvasSample(canvasRef.current?.nativeView || canvasRef.current);
+      if (disposed) {
+        if (cleanup) { try { cleanup(); } catch (e) {} }
+        return;
+      }
+      cleanupRef.current = cleanup;
+    })();
+
+    return () => {
+      disposed = true;
+      if (cleanupRef.current) { try { cleanupRef.current(); } catch (e) {} cleanupRef.current = null; }
+    };
+  }, []);
+
+  return (
+    <GridLayout rows="*">
+      <CanvasView ref={canvasRef} row={0} />
+    </GridLayout>
+  );
+}
+
+export default ${assets.componentName};
+`;
+  return [{
+    id: filename,
+    label: filename,
+    filename,
+    language: 'tsx',
+    kind: 'TSX component',
+    note: 'Use this React NativeScript component inside the screen or route where you want the canvas sample to render.',
+    mime: mimeForLanguage('tsx'),
+    content,
+  }];
+}
+
+function createVueExport(example, assets){
+  const filename = `${assets.slug}.vue`;
+  const extraImportsBlock = assets.extraImportsText ? `${assets.extraImportsText}\n` : '';
+  const content = `<template>
+  <GridLayout rows="*">
+    <Canvas ref="canvasEl" row="0" />
+  </GridLayout>
+</template>
+
+<script setup lang="ts">
+import { onBeforeUnmount, onMounted, ref } from "vue";
+import "@nativescript/canvas";
+${extraImportsBlock}${assets.header}
+
+${assets.runner}
+
+const canvasEl = ref<any>(null);
+let cleanup: (() => void) | null = null;
+
+onMounted(async () => {
+  cleanup = await runCanvasSample(canvasEl.value?.nativeView || canvasEl.value);
+});
+
+onBeforeUnmount(() => {
+  if (cleanup) { try { cleanup(); } catch (e) {} cleanup = null; }
+});
+<\/script>
+`;
+  return [{
+    id: filename,
+    label: filename,
+    filename,
+    language: 'vue',
+    kind: 'Single-file component',
+    note: 'Use this Vue single-file component in the routed page or view where you want the sample to render.',
+    mime: mimeForLanguage('vue'),
+    content,
+  }];
+}
+
+function createSvelteExport(example, assets){
+  const filename = `${assets.slug}.svelte`;
+  const extraImportsBlock = assets.extraImportsText ? `${assets.extraImportsText}\n` : '';
+  const content = `<script lang="ts">
+  import { onMount } from "svelte";
+  import "@nativescript/canvas";
+  ${extraImportsBlock}${assets.header}
+
+  ${assets.runner}
+
+  let canvasEl: any;
+  let cleanup: (() => void) | null = null;
+
+  onMount(() => {
+    let disposed = false;
+
+    void (async () => {
+      const nextCleanup = await runCanvasSample(canvasEl?.nativeView || canvasEl);
+      if (disposed) {
+        if (nextCleanup) { try { nextCleanup(); } catch (e) {} }
+        return;
+      }
+      cleanup = nextCleanup;
+    })();
+
+    return () => {
+      disposed = true;
+      if (cleanup) { try { cleanup(); } catch (e) {} cleanup = null; }
+    };
+  });
+<\/script>
+
+<GridLayout rows="*">
+  <Canvas bind:this={canvasEl} row="0" />
+</GridLayout>
+`;
+  return [{
+    id: filename,
+    label: filename,
+    filename,
+    language: 'svelte',
+    kind: 'Svelte component',
+    note: 'Use this Svelte component in the route or page where you want the canvas sample to render.',
+    mime: mimeForLanguage('svelte'),
+    content,
+  }];
+}
+
+function createSolidExport(example, assets){
+  const filename = `${assets.slug}.solid.tsx`;
+  const extraImportsBlock = assets.extraImportsText ? `${assets.extraImportsText}\n` : '';
+  const content = `import { onCleanup, onMount } from "solid-js";
+import "@nativescript/canvas";
+${extraImportsBlock}${assets.header}
+
+${assets.runner}
+
+const GridLayout: any = "gridLayout";
+const CanvasView: any = "Canvas";
+
+export default function ${assets.componentName}() {
+  let canvasEl: any;
+  let cleanup: (() => void) | null = null;
+
+  onMount(() => {
+    void (async () => {
+      cleanup = await runCanvasSample(canvasEl?.nativeView || canvasEl);
+    })();
+  });
+
+  onCleanup(() => {
+    if (cleanup) { try { cleanup(); } catch (e) {} cleanup = null; }
+  });
+
+  return (
+    <GridLayout rows="*">
+      <CanvasView ref={canvasEl} row={0} />
+    </GridLayout>
+  );
+}
+`;
+  return [{
+    id: filename,
+    label: filename,
+    filename,
+    language: 'tsx',
+    kind: 'TSX component',
+    note: 'Use this Solid component in the route or page where you want the canvas sample to render.',
+    mime: mimeForLanguage('tsx'),
+    content,
+  }];
+}
+
+function generateExportBundle(example, framework){
+  const assets = prepareExportAssets(example, framework);
+  switch (framework) {
+    case 'React':
+      return createReactExport(example, assets);
+    case 'Vue':
+      return createVueExport(example, assets);
+    case 'Svelte':
+      return createSvelteExport(example, assets);
+    case 'Solid':
+      return createSolidExport(example, assets);
+    case 'Angular':
+    default:
+      return createAngularExport(example, assets);
   }
 }
 
-export function onNavigatedFrom(args: EventData) {
-  const page = args.object as Page;
-  if (cleanup) { try { cleanup(); } catch (e) {} cleanup = null; }
-  page.off("navigatedFrom", onNavigatedFrom as any);
-}
-`;
-  return { xml, ts };
-}
-
 function openExport(){
-  const ex = generateExport(currentExample.value);
-  exportTab.value = 'xml';
-  exportContent.value = ex.xml;
+  if (exportFiles.value.length && !exportFiles.value.some(file => file.id === exportTab.value)) {
+    exportTab.value = exportFiles.value[0].id;
+  }
   modalVisible.value = true;
 }
 
 function setExportTab(tab){
   exportTab.value = tab;
-  const ex = generateExport(currentExample.value);
-  exportContent.value = tab === 'xml' ? ex.xml : ex.ts;
 }
 
 function copyExport(){
@@ -3364,7 +3771,6 @@ function copyExport(){
 }
 
 function downloadExport(){
-  const ex = generateExport(currentExample.value);
   const trigger = (data, name, mime) => {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([data], { type: mime }));
@@ -3372,14 +3778,17 @@ function downloadExport(){
     document.body.appendChild(a); a.click();
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
   };
-  trigger(ex.xml, `${currentExample.value.id}-page.xml`, 'application/xml');
-  trigger(ex.ts,  `${currentExample.value.id}-page.ts`,  'text/typescript');
+  exportFiles.value.forEach(file => {
+    trigger(file.content, file.filename, file.mime || mimeForLanguage(file.language));
+  });
 }
 
 function closeModal(){ modalVisible.value = false; }
 
 // ---------- lifecycle ----------
 let resizeObs = null;
+let onPopState = null;
+let resizeRerunFrame = null;
 
 onMounted(async () => {
   // Mark the VPDoc as a landing page so we can use full-width layout.
@@ -3390,18 +3799,59 @@ onMounted(async () => {
   contentContainer?.classList.add('docs-landing-container');
   document.body.classList.add('canvas-playground-active');
 
+  syncThemeMode();
+  if (typeof MutationObserver !== 'undefined') {
+    themeObserver = new MutationObserver(syncThemeMode);
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+  }
+  if (typeof window !== 'undefined') {
+    frameworkChangeHandler = (event) => {
+      const nextFramework = event?.detail;
+      if (exportFrameworks.includes(nextFramework) && nextFramework !== exportFramework.value) {
+        exportFramework.value = nextFramework;
+      }
+    };
+    window.addEventListener('framework-change', frameworkChangeHandler);
+  }
+
   // Render an immediate (unhighlighted) view, then upgrade once shiki loads.
   renderHighlight();
-  ensureHighlighter().then(renderHighlight).catch(() => { /* keep plain */ });
+  renderExportHighlight();
+  ensureHighlighter().then(() => {
+    renderHighlight();
+    renderExportHighlight();
+  }).catch(() => { /* keep plain */ });
 
-  // Run the initial sample once layout has settled.
-  nextTick(runSelected);
+  const initialExample = resolveExampleFromUrl();
+  if (initialExample) {
+    selectExample(initialExample.id, { replaceUrl: true });
+  }
+
+  onPopState = () => {
+    const nextExample = resolveExampleFromUrl();
+    if (nextExample) {
+      selectExample(nextExample.id, { syncUrl: false });
+    }
+  };
+  window.addEventListener('popstate', onPopState);
 
   // Resize the backing store on container size changes, but only refit;
   // don't auto-restart the sample (that's annoying mid-edit).
   resizeObs = new ResizeObserver(() => {
     const c = canvas.value;
-    if (c) sizeCanvas(c);
+    if (!c) return;
+    sizeCanvas(c);
+    // Static samples draw once, so resizing the backing store clears them.
+    // Re-run those samples after layout settles; animated samples repaint on
+    // their next frame, so leave them alone.
+    if (currentCleanup || resizeRerunFrame) return;
+    resizeRerunFrame = requestAnimationFrame(() => {
+      resizeRerunFrame = null;
+      runSelected();
+    });
   });
   if (canvasWrap.value) resizeObs.observe(canvasWrap.value);
 });
@@ -3409,6 +3859,11 @@ onMounted(async () => {
 onUnmounted(() => {
   stopCurrent();
   if (resizeObs) resizeObs.disconnect();
+  if (onPopState) window.removeEventListener('popstate', onPopState);
+  if (resizeRerunFrame) cancelAnimationFrame(resizeRerunFrame);
+  if (exportHighlightTimer) cancelAnimationFrame(exportHighlightTimer);
+  if (themeObserver) themeObserver.disconnect();
+  if (frameworkChangeHandler) window.removeEventListener('framework-change', frameworkChangeHandler);
   contentContainer?.classList.remove('docs-landing-container');
   vpDocRoot?.classList.remove('docs-landing-page');
   document.body.classList.remove('canvas-playground-active');
@@ -3417,6 +3872,14 @@ onUnmounted(() => {
 
 <style scoped>
 .canvas-playground {
+  --playground-code-bg: #f6f8fa;
+  --playground-code-gutter-bg: #ffffff;
+  --playground-code-gutter-color: #8c959f;
+  --playground-code-gutter-border: rgba(31,35,40,0.08);
+  --playground-code-text: #24292f;
+  --playground-code-caret: #24292f;
+  --playground-code-selection: rgba(9,105,218,0.22);
+  --playground-code-scrollbar-thumb: rgba(31,35,40,0.16);
   display: flex;
   /* Fill the page below VitePress's top nav. dvh accounts for dynamic UI
      (mobile address bar, etc.); fall back to vh for older browsers. */
@@ -3430,6 +3893,16 @@ onUnmounted(() => {
   /* Clip any sub-pixel overflow so card corners stay rounded inside the viewport. */
   overflow: hidden;
   box-sizing: border-box;
+}
+.canvas-playground.is-dark {
+  --playground-code-bg: #0d1117;
+  --playground-code-gutter-bg: #0d1117;
+  --playground-code-gutter-color: #6e7681;
+  --playground-code-gutter-border: rgba(255,255,255,0.06);
+  --playground-code-text: #e6edf3;
+  --playground-code-caret: #e6edf3;
+  --playground-code-selection: rgba(56,139,253,0.35);
+  --playground-code-scrollbar-thumb: rgba(255,255,255,0.10);
 }
 .canvas-playground .sidebar {
   width: 280px; padding: 0;
@@ -3583,9 +4056,7 @@ onUnmounted(() => {
 
 .canvas-playground .code-editor {
   flex: 1; display: flex; min-height: 0;
-  /* Code surface is always dark — the Shiki theme is github-dark and reads
-     best against this regardless of the surrounding site theme. */
-  background: #0d1117;
+  background: var(--playground-code-bg);
   font-family: 'Fira Code', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 13px;
   line-height: 1.55;
@@ -3593,9 +4064,9 @@ onUnmounted(() => {
 }
 .canvas-playground .gutter {
   width: 44px; flex-shrink: 0;
-  color: #6e7681;
-  background: #0d1117;
-  border-right: 1px solid rgba(255,255,255,0.06);
+  color: var(--playground-code-gutter-color);
+  background: var(--playground-code-gutter-bg);
+  border-right: 1px solid var(--playground-code-gutter-border);
   overflow: hidden;
   user-select: none;
   font-variant-numeric: tabular-nums;
@@ -3622,7 +4093,7 @@ onUnmounted(() => {
 }
 .canvas-playground .code-area .highlight {
   pointer-events: none;
-  color: #e6edf3;
+  color: var(--playground-code-text);
   background: transparent;
   /* Hide the highlight's scrollbars; the textarea owns scrolling input. */
   scrollbar-width: none;
@@ -3639,38 +4110,257 @@ onUnmounted(() => {
   border: 0; resize: none;
   background: transparent;
   color: transparent;
-  caret-color: #e6edf3;
+  caret-color: var(--playground-code-caret);
   outline: none;
 }
-.canvas-playground .code-area textarea::selection { background: rgba(56,139,253,0.35); color: transparent; }
+.canvas-playground .code-area textarea::selection { background: var(--playground-code-selection); color: transparent; }
 .canvas-playground .code-area textarea::-webkit-scrollbar { width: 10px; height: 10px; }
-.canvas-playground .code-area textarea::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.10); border-radius: 5px; }
+.canvas-playground .code-area textarea::-webkit-scrollbar-thumb { background: var(--playground-code-scrollbar-thumb); border-radius: 5px; }
 .canvas-playground .code-area textarea::-webkit-scrollbar-track { background: transparent; }
 .canvas-playground .modal {
   position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+  padding: 24px;
   background: rgba(0,0,0,0.55); z-index: 50;
+  backdrop-filter: blur(8px);
 }
 .canvas-playground .modal-content {
-  background: #021025; padding: 20px; border-radius: 10px;
-  width: min(900px, 95%); max-height: 85vh; overflow: auto;
-  border: 1px solid rgba(255,255,255,0.06);
+  display: grid;
+  gap: 18px;
+  background: var(--vp-c-bg); padding: 24px; border-radius: 18px;
+  width: min(980px, 100%); max-height: min(88vh, 920px); overflow: auto;
+  border: 1px solid var(--vp-c-divider);
+  box-shadow: 0 24px 64px -28px rgba(0,0,0,0.55);
 }
-.canvas-playground .modal-content .muted { color: #94a3b8; font-size: 13px; margin-top: 4px; }
-.canvas-playground .tabs { display: flex; gap: 6px; margin: 12px 0; }
+.canvas-playground .modal-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.canvas-playground .modal-copy { min-width: 0; }
+.canvas-playground .modal-close {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-2);
+  cursor: pointer;
+  transition: transform 120ms ease, background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+.canvas-playground .modal-close:hover {
+  transform: translateY(-1px);
+  background: var(--vp-c-default-soft);
+  color: var(--vp-c-text-1);
+}
+.canvas-playground .modal-content h3 {
+  margin: 0;
+  color: var(--vp-c-text-1);
+  font-size: clamp(1.75rem, 2vw, 2.2rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.canvas-playground .modal-content .muted {
+  color: var(--vp-c-text-2);
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 10px 0 0;
+  max-width: 58ch;
+}
+.canvas-playground .framework-switcher {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--vp-c-divider);
+  scrollbar-width: none;
+}
+.canvas-playground .framework-switcher::-webkit-scrollbar { display: none; }
+.canvas-playground .framework-switcher-button {
+  flex: 0 0 auto;
+  padding: 0.625rem 1rem;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  background: transparent;
+  color: var(--vp-c-text-2);
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.canvas-playground .framework-switcher-button:hover {
+  color: var(--vp-c-brand-1);
+}
+.canvas-playground .framework-switcher-button.active {
+  color: var(--vp-c-brand-1);
+  border-bottom-color: var(--vp-c-brand-1);
+}
+.canvas-playground .modal-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.canvas-playground .tabs {
+  display: inline-flex;
+  gap: 4px;
+  margin: 0;
+  padding: 4px;
+  border-radius: 14px;
+  background: var(--vp-c-bg-soft);
+  border: 1px solid var(--vp-c-divider);
+}
 .canvas-playground .tabs button {
-  padding: 6px 12px; border-radius: 6px; border: 0;
-  background: rgba(255,255,255,0.06); cursor: pointer; color: #e6eef6; font-size: 13px;
+  min-height: 38px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  color: var(--vp-c-text-2);
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
 }
-.canvas-playground .tabs button.active { background: #06b6d4; color: #002a2f; }
+.canvas-playground .tabs button:hover { background: var(--vp-c-default-soft); color: var(--vp-c-text-1); }
+.canvas-playground .tabs button.active {
+  background: var(--vp-c-brand-1);
+  color: white;
+  box-shadow: 0 14px 30px -20px rgba(247,89,48,0.75);
+}
+.canvas-playground .export-kind {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--vp-c-default-soft);
+  color: var(--vp-c-text-2);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
 .canvas-playground .exportArea {
-  background: #00131b; padding: 14px; border-radius: 6px;
-  color: #dffdfd; white-space: pre-wrap; font-size: 12.5px;
+  background: var(--playground-code-bg); padding: 18px 20px; border-radius: 14px;
+  border: 1px solid var(--playground-code-gutter-border);
+  color: var(--playground-code-text); font-size: 12.5px;
+  line-height: 1.6;
+  font-family: 'Fira Code', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  min-height: 220px;
   max-height: 50vh; overflow: auto;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
 }
-.canvas-playground .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
+.canvas-playground .exportArea::-webkit-scrollbar { width: 10px; height: 10px; }
+.canvas-playground .exportArea::-webkit-scrollbar-thumb { background: var(--playground-code-scrollbar-thumb); border-radius: 5px; }
+.canvas-playground .exportArea::-webkit-scrollbar-track { background: transparent; }
+.canvas-playground .exportArea :deep(pre),
+.canvas-playground .exportArea :deep(code) {
+  background: transparent !important;
+  margin: 0; padding: 0;
+  font-family: inherit; font-size: inherit; line-height: inherit;
+}
+.canvas-playground .modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--vp-c-divider);
+}
+.canvas-playground .modal-note {
+  margin: 0;
+  max-width: 42ch;
+  color: var(--vp-c-text-2);
+  font-size: 12.5px;
+  line-height: 1.6;
+}
+.canvas-playground .modal-action-group {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
 .canvas-playground .modal-actions button {
-  padding: 8px 14px; border-radius: 6px; border: 0;
-  background: #0ea5a5; color: #012; cursor: pointer; font-weight: 500;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
 }
-.canvas-playground .modal-actions button.ghost { background: rgba(255,255,255,0.06); color: #e6eef6; }
+.canvas-playground .modal-actions button svg { flex-shrink: 0; }
+.canvas-playground .modal-actions button:hover { transform: translateY(-1px); }
+.canvas-playground .modal-actions button.secondary {
+  border-color: var(--vp-c-divider);
+  background: var(--vp-c-bg-soft);
+}
+.canvas-playground .modal-actions button.secondary:hover {
+  background: var(--vp-c-default-soft);
+}
+.canvas-playground .modal-actions button.primary {
+  background: var(--vp-c-brand-1);
+  color: white;
+  box-shadow: 0 18px 32px -22px rgba(247,89,48,0.85);
+}
+.canvas-playground .modal-actions button.primary:hover {
+  background: var(--vp-c-brand-2);
+  box-shadow: 0 20px 34px -22px rgba(247,89,48,0.92);
+}
+.canvas-playground .modal-actions button.ghost {
+  background: transparent;
+  border-color: var(--vp-c-divider);
+  color: var(--vp-c-text-2);
+}
+.canvas-playground .modal-actions button.ghost:hover {
+  background: var(--vp-c-default-soft);
+  color: var(--vp-c-text-1);
+}
+
+@media (max-width: 760px) {
+  .canvas-playground .modal {
+    padding: 16px;
+    align-items: flex-end;
+  }
+
+  .canvas-playground .modal-content {
+    width: 100%;
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .canvas-playground .modal-header {
+    gap: 12px;
+  }
+
+  .canvas-playground .framework-switcher {
+    margin-inline: -4px;
+    padding-inline: 4px;
+  }
+
+  .canvas-playground .modal-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .canvas-playground .modal-note {
+    max-width: none;
+  }
+
+  .canvas-playground .modal-action-group {
+    width: 100%;
+  }
+
+  .canvas-playground .modal-action-group button {
+    flex: 1 1 calc(50% - 5px);
+    justify-content: center;
+  }
+}
 </style>

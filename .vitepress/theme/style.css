@@ -494,8 +494,14 @@ body.canvas-playground-active .VPNavBar:not(.home) {
 
 [class*='language-'] {
   overflow: hidden;
-  border: 1px solid rgba(148, 163, 184, 0.22);
+  border: 1px solid rgba(148, 163, 184, 0.28);
   border-radius: 1.25rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.94));
+  box-shadow: 0 22px 56px -42px rgba(15, 23, 42, 0.22);
+}
+
+.dark [class*='language-'] {
+  border-color: rgba(148, 163, 184, 0.22);
   background: linear-gradient(180deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.94));
   box-shadow: 0 22px 56px -42px rgba(15, 23, 42, 0.75);
 }
