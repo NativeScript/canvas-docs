@@ -50,42 +50,6 @@ const rootRef = ref<HTMLElement | null>(null);
       </div>
     </section>
 
-    <section class="canvas-docs-stats">
-      <div>
-        <strong>4</strong>
-        <span>rendering contexts in one package</span>
-      </div>
-      <div>
-        <strong>1</strong>
-        <span>API surface that feels familiar if you already know the web</span>
-      </div>
-      <div>
-        <strong>0</strong>
-        <span>need to split 2D, WebGL, and GPU docs across separate packages</span>
-      </div>
-    </section>
-
-    <section>
-      <h2>Why teams reach for it</h2>
-      <div class="canvas-docs-feature-grid">
-        <div class="feature-item canvas-docs-feature-item">
-          <div class="canvas-docs-feature-icon canvas-docs-feature-icon--orange">2D</div>
-          <h3>Immediate-mode UI drawing</h3>
-          <p>Build charts, overlays, signatures, image editing tools, and custom controls with a fast 2D context.</p>
-        </div>
-        <div class="feature-item canvas-docs-feature-item">
-          <div class="canvas-docs-feature-icon canvas-docs-feature-icon--blue">3D</div>
-          <h3>WebGL workflows that transfer cleanly</h3>
-          <p>Bring existing rendering knowledge across with WebGL and WebGL2 contexts that map to familiar browser patterns.</p>
-        </div>
-        <div class="feature-item canvas-docs-feature-item">
-          <div class="canvas-docs-feature-icon canvas-docs-feature-icon--green">GPU</div>
-          <h3>WebGPU when you need more headroom</h3>
-          <p>Push into newer GPU-driven pipelines without abandoning the rest of the NativeScript canvas ecosystem.</p>
-        </div>
-      </div>
-    </section>
-
     <section>
       <h2>Start where your project is headed</h2>
       <div class="canvas-docs-link-grid">

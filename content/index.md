@@ -1,5 +1,6 @@
 ---
 layout: page
+pageClass: canvas-home-page
 ---
 
-<PluginsHome />
+<CanvasHome />

@@ -3,8 +3,8 @@ import { defineConfig } from 'vitepress';
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   lang: 'en-US',
-  title: 'NativeScript Packages',
-  description: 'Documentation for NativeScript canvas ecosystem packages, including @nativescript/canvas and @nativescript/audio-context.',
+  title: 'NativeScript Canvas',
+  description: 'Canvas APIs, WebGL/WebGPU examples, and NativeScript rendering guides for @nativescript/canvas.',
   
   srcDir: './content',
   cleanUrls: true,
@@ -22,24 +22,28 @@ export default defineConfig({
     ['link', { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' }],
     ['meta', { name: 'theme-color', content: '#F75930' }],
     ['meta', { property: 'og:type', content: 'website' }],
-    ['meta', { property: 'og:site_name', content: 'NativeScript Canvas Packages' }],
-    ['meta', { property: 'og:title', content: 'NativeScript Canvas Packages' }],
-    ['meta', { property: 'og:description', content: 'Documentation for @nativescript/canvas, @nativescript/audio-context, and related NativeScript canvas ecosystem packages.' }],
-    ['meta', { property: 'og:image', content: 'https://plugins.nstudio.io/nstudio-plugins-meta.png' }],
+    ['meta', { property: 'og:site_name', content: 'NativeScript Canvas' }],
+    ['meta', { property: 'og:title', content: 'NativeScript Canvas' }],
+    ['meta', { property: 'og:description', content: 'Canvas APIs, WebGL/WebGPU examples, and NativeScript rendering guides for @nativescript/canvas.' }],
+    ['meta', { property: 'og:url', content: 'https://canvas.nativescript.org' }],
+    ['meta', { property: 'og:image', content: 'https://canvas.nativescript.org/og/canvas-social.png' }],
+    ['meta', { property: 'og:image:secure_url', content: 'https://canvas.nativescript.org/og/canvas-social.png' }],
     ['meta', { property: 'og:image:width', content: '1200' }],
     ['meta', { property: 'og:image:height', content: '630' }],
-    ['meta', { property: 'og:url', content: 'https://plugins.nstudio.io' }],
+    ['meta', { property: 'og:image:alt', content: 'NativeScript Canvas - Native Canvas. Real pixels.' }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
-    ['meta', { name: 'twitter:title', content: 'NativeScript Canvas Packages' }],
-    ['meta', { name: 'twitter:description', content: 'Documentation for @nativescript/canvas, @nativescript/audio-context, and related NativeScript canvas ecosystem packages.' }],
-    ['meta', { name: 'twitter:image', content: 'https://plugins.nstudio.io/nstudio-plugins-meta.png' }],
+    ['meta', { name: 'twitter:title', content: 'NativeScript Canvas' }],
+    ['meta', { name: 'twitter:description', content: 'Canvas APIs, WebGL/WebGPU examples, and NativeScript rendering guides for @nativescript/canvas.' }],
+    ['meta', { name: 'twitter:image', content: 'https://canvas.nativescript.org/og/canvas-social.png' }],
+    ['meta', { name: 'twitter:image:alt', content: 'NativeScript Canvas - Native Canvas. Real pixels.' }],
+    ['link', { rel: 'canonical', href: 'https://canvas.nativescript.org' }],
     ['link', { rel: 'preconnect', href: 'https://fonts.googleapis.com' }],
     ['link', { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' }],
     ['link', { href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap', rel: 'stylesheet' }],
   ],
 
   themeConfig: {
-    logo: '/logo.svg',
+    siteTitle: false,
     
     nav: [
         { text: 'Home', link: '/' },
@@ -53,7 +57,7 @@ export default defineConfig({
     sidebar: {
       '/plugins/': [
         {
-            text: 'Canvas Repository Packages',
+            text: 'Packages',
           items: [
               { text: 'Overview', link: '/plugins/' },
               { text: '@nativescript/canvas', link: '/canvas/' },

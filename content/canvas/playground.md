@@ -4,7 +4,7 @@ title: Canvas Playground
 
 Open the interactive Canvas Playground to explore examples and export them to NativeScript.
 
-- Live playground: [/canvas-playground/](canvas-playground/index.md)
+- Live playground: [/canvas-playground/](/canvas-playground/)
 
 Examples include 2D demos (bouncing balls, particles, waves), and 3D samples using WebGL and WebGPU.
 

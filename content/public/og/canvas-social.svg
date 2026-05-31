@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">NativeScript Canvas</title>
+  <desc id="desc">Native-backed Canvas, WebGL, and WebGPU APIs for NativeScript.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0a1020" />
+      <stop offset="0.48" stop-color="#101a33" />
+      <stop offset="1" stop-color="#050712" />
+    </linearGradient>
+    <linearGradient id="ns-logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fbbf24" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#fb923c" />
+    </linearGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#19253f" />
+      <stop offset="1" stop-color="#0a0f1e" />
+    </linearGradient>
+    <linearGradient id="screenGlow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f75930" stop-opacity="0.8" />
+      <stop offset="0.55" stop-color="#22d3ee" stop-opacity="0.8" />
+      <stop offset="1" stop-color="#3b82f6" stop-opacity="0.85" />
+    </linearGradient>
+    <filter id="softShadow" x="-40%" y="-40%" width="180%" height="180%">
+      <feDropShadow dx="0" dy="28" stdDeviation="34" flood-color="#020617" flood-opacity="0.48" />
+    </filter>
+    <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="24" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <clipPath id="screenClip">
+      <rect x="694" y="176" width="380" height="278" rx="28" />
+    </clipPath>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <circle cx="110" cy="92" r="250" fill="#f75930" opacity="0.18" filter="url(#glow)" />
+  <circle cx="1076" cy="546" r="275" fill="#3b82f6" opacity="0.22" filter="url(#glow)" />
+  <circle cx="772" cy="140" r="180" fill="#22d3ee" opacity="0.12" filter="url(#glow)" />
+
+  <g opacity="0.16" stroke="#94a3b8">
+    <path d="M0 535H1200" />
+    <path d="M0 485H1200" />
+    <path d="M0 435H1200" />
+    <path d="M115 0V630" />
+    <path d="M216 0V630" />
+    <path d="M976 0V630" />
+    <path d="M1078 0V630" />
+  </g>
+
+  <g transform="translate(74 72)">
+    <g transform="scale(0.068)">
+      <path
+        fill="url(#ns-logo-gradient)"
+        d="M1024 256C1024 114.71 909.29 0 768 0H256C114.71 0 0 114.71 0 256v512c0 141.29 114.71 256 256 256h512c141.29 0 256-114.71 256-256V256zM843 511.86v1.1c0 .26-.19.47-.45.49-33.36 3.13-59.48 30.24-59.48 64.41v136.95c0 9.56-2.01 18.8-5.64 27.23-10.35 24.07-33.84 41.57-61.16 41.57h-69.2l-.48-.6-269.18-337.33v337.93h-69.68c-36.89 0-66.8-29.91-66.8-66.8V577.86c0-34.17-26.11-61.28-59.48-64.41-.25-.02-.45-.23-.45-.49v-1.1c0-.25.19-.46.45-.49 33.24-3.24 59.22-31.02 59.22-65.11V307.19c0-9.29 1.9-18.14 5.33-26.18 10.18-23.88 33.87-40.62 61.47-40.62h69.66l.28.35 269.18 337.34V240.39h69.94c36.89 0 66.8 29.91 66.8 66.8v139.07c0 34.09 25.98 61.87 59.22 65.11.26.03.45.24.45.49z"
+      />
+    </g>
+    <text x="92" y="43" fill="#f8fafc" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="31" font-weight="800">NativeScript</text>
+    <text x="92" y="77" fill="#94a3b8" font-family="Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" font-size="19" font-weight="600">Canvas APIs for native apps</text>
+  </g>
+
+  <g transform="translate(82 206)">
+    <text x="0" y="0" fill="#fb923c" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="19" font-weight="800" letter-spacing="5">CANVAS.NATIVESCRIPT.ORG</text>
+    <text x="0" y="86" fill="#ffffff" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="78" font-weight="850">Native Canvas.</text>
+    <text x="0" y="166" fill="#ffffff" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="78" font-weight="850">Real pixels.</text>
+    <text x="2" y="226" fill="#cbd5e1" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="28" font-weight="550">2D, WebGL, WebGPU, and visual playgrounds</text>
+    <text x="2" y="264" fill="#94a3b8" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="24" font-weight="500">built for iOS and Android with NativeScript.</text>
+  </g>
+
+  <g transform="translate(82 523)">
+    <rect width="116" height="38" rx="19" fill="#ffffff" opacity="0.08" stroke="#ffffff" stroke-opacity="0.12" />
+    <rect x="134" width="129" height="38" rx="19" fill="#ffffff" opacity="0.08" stroke="#ffffff" stroke-opacity="0.12" />
+    <rect x="282" width="117" height="38" rx="19" fill="#ffffff" opacity="0.08" stroke="#ffffff" stroke-opacity="0.12" />
+    <text x="21" y="25" fill="#f8fafc" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="16" font-weight="700">Canvas 2D</text>
+    <text x="158" y="25" fill="#f8fafc" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="16" font-weight="700">WebGL/WebGPU</text>
+    <text x="309" y="25" fill="#f8fafc" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="16" font-weight="700">Playground</text>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <rect x="644" y="134" width="490" height="368" rx="44" fill="#030712" transform="rotate(-2 889 318)" />
+    <rect x="668" y="158" width="442" height="320" rx="34" fill="url(#panel)" transform="rotate(-2 889 318)" />
+    <g transform="rotate(-2 889 318)">
+      <circle cx="704" cy="190" r="8" fill="#fb7185" />
+      <circle cx="729" cy="190" r="8" fill="#fbbf24" />
+      <circle cx="754" cy="190" r="8" fill="#34d399" />
+      <g clip-path="url(#screenClip)">
+        <rect x="694" y="176" width="380" height="278" fill="#101827" />
+        <rect x="694" y="176" width="380" height="278" fill="url(#screenGlow)" opacity="0.18" />
+        <g stroke="#334155" stroke-width="1" opacity="0.55">
+          <path d="M694 226H1074M694 276H1074M694 326H1074M694 376H1074M694 426H1074" />
+          <path d="M744 176V454M794 176V454M844 176V454M894 176V454M944 176V454M994 176V454M1044 176V454" />
+        </g>
+        <path d="M725 351C769 268 862 413 915 319C959 241 1010 270 1065 294" fill="none" stroke="#22d3ee" stroke-width="5" stroke-linecap="round" opacity="0.9" />
+        <path d="M723 389C803 329 853 244 927 288C985 322 1015 422 1076 354" fill="none" stroke="#f97316" stroke-width="5" stroke-linecap="round" opacity="0.88" />
+        <circle cx="760" cy="321" r="7" fill="#22d3ee" />
+        <circle cx="873" cy="330" r="7" fill="#fb923c" />
+        <circle cx="984" cy="307" r="7" fill="#60a5fa" />
+      </g>
+      <rect x="936" y="421" width="116" height="36" rx="18" fill="#ffffff" opacity="0.11" />
+      <text x="959" y="445" fill="#f8fafc" font-family="Menlo, Consolas, monospace" font-size="18" font-weight="700" letter-spacing="3">render()</text>
+    </g>
+  </g>
+</svg>

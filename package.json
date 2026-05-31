@@ -1,14 +1,14 @@
 {
-  "name": "plugins.nstudio.io",
+  "name": "org.nativescript.canvas-docs",
   "version": "1.0.0",
-  "description": "Documentation site for nStudio NativeScript plugins",
+  "description": "Docs for NativeScript Canvas",
   "type": "module",
   "scripts": {
     "dev": "vitepress dev",
     "build": "vitepress build",
     "preview": "vitepress preview",
-    "deploy": "npm run build && wrangler pages deploy .vitepress/dist --project-name=plugins-nstudio-io",
-    "deploy:preview": "npm run build && wrangler pages deploy .vitepress/dist --project-name=plugins-nstudio-io --branch=preview"
+    "deploy": "npm run build && wrangler pages deploy .vitepress/dist --project-name=canvas-nativescript-org --branch=main",
+    "deploy:preview": "npm run build && wrangler pages deploy .vitepress/dist --project-name=canvas-nativescript-org --branch=preview"
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.15",

@@ -38,57 +38,6 @@ const rootRef = ref<HTMLElement | null>(null);
       </div>
     </section>
 
-    <section class="audio-docs-stats">
-      <div>
-        <strong>2</strong>
-        <span>core contexts for real-time and offline audio work</span>
-      </div>
-      <div>
-        <strong>Many</strong>
-        <span>common node types for generation, filtering, panning, dynamics, and timing</span>
-      </div>
-      <div>
-        <strong>1</strong>
-        <span>mental model if you already understand Web Audio graph construction</span>
-      </div>
-    </section>
-
-    <section>
-      <h2>What you can build</h2>
-      <div class="audio-docs-feature-grid">
-        <div class="feature-item audio-docs-feature-item">
-          <div class="audio-docs-feature-icon audio-docs-feature-icon--rose">FX</div>
-          <h3>Effects pipelines</h3>
-          <p>Chain gain, compression, convolution, delay, panning, and filtering nodes into reusable audio flows.</p>
-        </div>
-        <div class="feature-item audio-docs-feature-item">
-          <div class="audio-docs-feature-icon audio-docs-feature-icon--sky">OSC</div>
-          <h3>Synthesis and interactive sound</h3>
-          <p>Drive oscillators, envelopes, and event-based playback for apps, games, and instruments.</p>
-        </div>
-        <div class="feature-item audio-docs-feature-item">
-          <div class="audio-docs-feature-icon audio-docs-feature-icon--emerald">OFF</div>
-          <h3>Offline rendering and analysis</h3>
-          <p>Render ahead of time, inspect output, and generate assets or previews without tying work to live playback.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="audio-docs-band">
-      <div>
-        <p class="audio-docs-kicker">Typical use cases</p>
-        <h2>From synth apps to playback pipelines</h2>
-        <p>
-          The package fits interactive sound effects, music tools, audio visualization, and custom playback systems where the default media stack is too rigid.
-        </p>
-      </div>
-      <ul class="audio-docs-stack">
-        <li><strong>Music apps</strong><span>Sequencers, synths, and reactive instruments</span></li>
-        <li><strong>Games</strong><span>Interactive sound design and event-driven playback</span></li>
-        <li><strong>Media tools</strong><span>Analysis, effects processing, and render pipelines</span></li>
-      </ul>
-    </section>
-
     <section>
       <h2>Choose your next node</h2>
       <div class="audio-docs-link-grid">
