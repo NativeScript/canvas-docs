@@ -3956,8 +3956,17 @@ onUnmounted(() => {
   display: flex; align-items: center; gap: 8px;
   padding: 12px 6px 7px;
   position: sticky; top: 0;
-  background: linear-gradient(180deg, var(--vp-c-bg) 72%, color-mix(in srgb, var(--vp-c-bg), transparent 100%));
+  background: var(--vp-c-bg);
   z-index: 2;
+}
+/* Soft fade beneath the sticky header so list items don't appear to "cut" hard
+   against it, without letting scrolling content bleed through the header itself. */
+.canvas-playground .group-header::after {
+  content: '';
+  position: absolute; left: 0; right: 0; top: 100%;
+  height: 10px;
+  background: linear-gradient(180deg, var(--vp-c-bg), color-mix(in srgb, var(--vp-c-bg), transparent 100%));
+  pointer-events: none;
 }
 .canvas-playground .group-accent {
   width: 7px; height: 7px; border-radius: 999px;

@@ -1,4 +1,4 @@
-# NativeScript Canvas Repository Packages
+# Packages
 
 This catalog tracks the packages published from the NativeScript/canvas monorepo.
 
