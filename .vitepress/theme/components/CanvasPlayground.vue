@@ -98,7 +98,7 @@
         <div class="modal-header">
           <div class="modal-copy">
             <h3>Export to NativeScript</h3>
-            <p class="muted">Drop {{ exportFileCopy.item }} into a NativeScript {{ exportFramework }} project with <code>@nativescript/canvas</code> installed and wire {{ exportFileCopy.pronoun }} into your page route.</p>
+            <p class="muted">Drop {{ exportFileCopy.item }} into a NativeScript {{ exportFramework }} project with <code>@nativescript/canvas</code> and <code>@nativescript/canvas-polyfill</code> installed, then wire {{ exportFileCopy.pronoun }} into your page route. The file registers the <code>Canvas</code> element itself; see the header comments for any extra packages this sample needs.</p>
           </div>
           <button class="modal-close" type="button" aria-label="Close export modal" @click="closeModal">
             <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.29 19.7 2.88 18.3 9.17 12 2.88 5.71 4.29 4.29l6.3 6.3 6.29-6.3z"/></svg>
@@ -2701,11 +2701,12 @@ return () => { cancelAnimationFrame(raf); geo.dispose(); mat.dispose(); renderer
     category: 'pixi',
     contextType: 'webgl',
     title: 'Pixi.js Bouncing Shapes',
-    code: `// Loads Pixi.js v7 from a CDN. In NativeScript install \`pixi.js\` from npm.
-const PIXI = await import('https://esm.sh/pixi.js@7.4.0');
+    code: `// Loads Pixi.js v8 from a CDN. In NativeScript install \`pixi.js\` + \`@nativescript/canvas-pixi\`.
+const PIXI = await import('https://esm.sh/pixi.js@8.5.2?bundle');
 
-const app = new PIXI.Application({
-  view: canvas,
+const app = new PIXI.Application();
+await app.init({
+  canvas,
   width: canvas.width,
   height: canvas.height,
   background: 0x010617,
@@ -2718,9 +2719,7 @@ const shapes = [];
 for (let i = 0; i < N; i++){
   const g = new PIXI.Graphics();
   const r = 8 + Math.random() * 22;
-  g.beginFill((Math.random() * 0xffffff) | 0);
-  g.drawCircle(0, 0, r);
-  g.endFill();
+  g.circle(0, 0, r).fill((Math.random() * 0xffffff) | 0);
   g.x = Math.random() * canvas.width;
   g.y = Math.random() * canvas.height;
   g.vx = (Math.random() - 0.5) * 3.2;
@@ -2742,7 +2741,7 @@ const tick = () => {
 app.ticker.add(tick);
 app.start();
 
-return () => { app.ticker.remove(tick); app.destroy(false, { children: true, texture: true, baseTexture: true }); };
+return () => { app.ticker.remove(tick); app.destroy(false, { children: true, texture: true }); };
 `
   },
   {
@@ -2750,11 +2749,12 @@ return () => { app.ticker.remove(tick); app.destroy(false, { children: true, tex
     category: 'pixi',
     contextType: 'webgl',
     title: 'Pixi.js Particle Container (5k)',
-    code: `// 5000 sprites animated via Pixi's ParticleContainer (fast batched rendering).
-const PIXI = await import('https://esm.sh/pixi.js@7.4.0');
+    code: `// 5000 particles animated via Pixi v8's ParticleContainer (fast batched rendering).
+const PIXI = await import('https://esm.sh/pixi.js@8.5.2?bundle');
 
-const app = new PIXI.Application({
-  view: canvas,
+const app = new PIXI.Application();
+await app.init({
+  canvas,
   width: canvas.width,
   height: canvas.height,
   background: 0x010617,
@@ -2774,21 +2774,25 @@ octx.fillRect(0, 0, 32, 32);
 const tex = PIXI.Texture.from(off);
 
 const N = 5000;
-const container = new PIXI.ParticleContainer(N, { position: true, scale: true, alpha: true, tint: true });
+// Only position changes each frame, so mark just that property dynamic.
+const container = new PIXI.ParticleContainer({ dynamicProperties: { position: true, scale: false, rotation: false, color: false } });
 app.stage.addChild(container);
 
 const items = [];
 for (let i = 0; i < N; i++){
-  const s = new PIXI.Sprite(tex);
-  s.anchor.set(0.5);
-  s.x = Math.random() * canvas.width;
-  s.y = Math.random() * canvas.height;
-  s.scale.set(0.4 + Math.random() * 0.6);
-  s.tint = Math.floor(Math.random() * 0xffffff);
-  s.alpha = 0.7;
+  const sc = 0.4 + Math.random() * 0.6;
+  const s = new PIXI.Particle({
+    texture: tex,
+    anchorX: 0.5, anchorY: 0.5,
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    scaleX: sc, scaleY: sc,
+    tint: Math.floor(Math.random() * 0xffffff),
+    alpha: 0.7,
+  });
   s.vx = (Math.random() - 0.5) * 3;
   s.vy = (Math.random() - 0.5) * 3;
-  container.addChild(s);
+  container.addParticle(s);
   items.push(s);
 }
 
@@ -2804,7 +2808,7 @@ app.start();
 
 return () => {
   app.ticker.remove(tick);
-  app.destroy(false, { children: true, texture: true, baseTexture: true });
+  app.destroy(false, { children: true, texture: true });
   tex.destroy(true);
 };
 `
@@ -2814,15 +2818,21 @@ return () => {
     category: 'pixi',
     contextType: 'webgl',
     title: 'Pixi.js Animated Text',
-    code: `const PIXI = await import('https://esm.sh/pixi.js@7.4.0');
-const app = new PIXI.Application({ view: canvas, width: canvas.width, height: canvas.height, background: 0x010617, antialias: true, autoStart: false });
+    code: `const PIXI = await import('https://esm.sh/pixi.js@8.5.2?bundle');
+const app = new PIXI.Application();
+await app.init({ canvas, width: canvas.width, height: canvas.height, background: 0x010617, antialias: true, autoStart: false });
+// Pixi v8 uses a FillGradient object for gradient text (the v7 fill: [..] array is gone).
+const fill = new PIXI.FillGradient(0, 0, 0, 1);
+fill.addColorStop(0, '#22d3ee');
+fill.addColorStop(1, '#a855f7');
 const style = new PIXI.TextStyle({
   fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto',
   fontSize: 64, fontWeight: '800',
-  fill: ['#22d3ee', '#a855f7'], stroke: '#0b1428', strokeThickness: 4,
-  dropShadow: true, dropShadowBlur: 8, dropShadowColor: 0x0ea5e9, dropShadowDistance: 0,
+  fill,
+  stroke: { color: '#0b1428', width: 4 },
+  dropShadow: { color: 0x0ea5e9, blur: 8, distance: 0, alpha: 1, angle: 0 },
 });
-const text = new PIXI.Text('Canvas Playground', style);
+const text = new PIXI.Text({ text: 'Canvas Playground', style });
 text.anchor.set(0.5);
 text.x = canvas.width / 2; text.y = canvas.height / 2;
 app.stage.addChild(text);
@@ -2833,7 +2843,7 @@ const tick = () => {
   text.rotation = 0.05 * Math.sin(t * 0.5);
 };
 app.ticker.add(tick); app.start();
-return () => { app.ticker.remove(tick); app.destroy(false, { children: true, texture: true, baseTexture: true }); };
+return () => { app.ticker.remove(tick); app.destroy(false, { children: true, texture: true }); };
 `
   },
   {
@@ -2841,28 +2851,30 @@ return () => { app.ticker.remove(tick); app.destroy(false, { children: true, tex
     category: 'pixi',
     contextType: 'webgl',
     title: 'Pixi.js Bezier Path',
-    code: `const PIXI = await import('https://esm.sh/pixi.js@7.4.0');
-const app = new PIXI.Application({ view: canvas, width: canvas.width, height: canvas.height, background: 0x010617, antialias: true, autoStart: false });
+    code: `const PIXI = await import('https://esm.sh/pixi.js@8.5.2?bundle');
+const app = new PIXI.Application();
+await app.init({ canvas, width: canvas.width, height: canvas.height, background: 0x010617, antialias: true, autoStart: false });
 const g = new PIXI.Graphics();
 app.stage.addChild(g);
 let t = 0;
 const tick = () => {
   t += 0.012;
   g.clear();
-  g.lineStyle({ width: 2.5, color: 0x22d3ee, alpha: 0.9 });
+  // Pixi v8: build the path first, then stroke it.
   const w = canvas.width, h = canvas.height;
   g.moveTo(0, h * 0.5);
   for (let x = 0; x <= w; x += 14){
     const y = h*0.5 + Math.sin(x*0.012 + t)*60 + Math.sin(x*0.025 + t*1.7)*30;
     g.lineTo(x, y);
   }
+  g.stroke({ width: 2.5, color: 0x22d3ee, alpha: 0.9 });
   // Bezier flourish on top
-  g.lineStyle({ width: 4, color: 0xa855f7, alpha: 0.85 });
   g.moveTo(40, h*0.8);
   g.bezierCurveTo(w*0.3, h*0.1 + 80*Math.sin(t), w*0.7, h*0.9 + 60*Math.cos(t*1.4), w-40, h*0.2);
+  g.stroke({ width: 4, color: 0xa855f7, alpha: 0.85 });
 };
 app.ticker.add(tick); app.start();
-return () => { app.ticker.remove(tick); app.destroy(false, { children: true, texture: true, baseTexture: true }); };
+return () => { app.ticker.remove(tick); app.destroy(false, { children: true, texture: true }); };
 `
   },
   {
@@ -2870,28 +2882,27 @@ return () => { app.ticker.remove(tick); app.destroy(false, { children: true, tex
     category: 'pixi',
     contextType: 'webgl',
     title: 'Pixi.js Drag & Drop',
-    code: `const PIXI = await import('https://esm.sh/pixi.js@7.4.0');
-const app = new PIXI.Application({ view: canvas, width: canvas.width, height: canvas.height, background: 0x010617, antialias: true });
+    code: `const PIXI = await import('https://esm.sh/pixi.js@8.5.2?bundle');
+const app = new PIXI.Application();
+await app.init({ canvas, width: canvas.width, height: canvas.height, background: 0x010617, antialias: true });
 app.stage.eventMode = 'static';
 app.stage.hitArea = app.screen;
 
 const COLORS = [0x22d3ee, 0xa855f7, 0xf472b6, 0x4ade80, 0xfb923c, 0xfacc15];
 for (let i = 0; i < 16; i++){
   const g = new PIXI.Graphics();
-  g.beginFill(COLORS[i % COLORS.length]);
-  g.drawRoundedRect(-30, -30, 60, 60, 10);
-  g.endFill();
+  g.roundRect(-30, -30, 60, 60, 10).fill(COLORS[i % COLORS.length]);
   g.x = 80 + Math.random() * (canvas.width  - 160);
   g.y = 80 + Math.random() * (canvas.height - 160);
   g.eventMode = 'static'; g.cursor = 'grab';
-  g.on('pointerdown', (ev) => {
+  // Pixi v8: the handler receives the FederatedPointerEvent directly (no ev.data).
+  g.on('pointerdown', () => {
     g.alpha = 0.7; g.cursor = 'grabbing'; g.zIndex = 1000;
-    g.data = ev.data;
     g.dragging = true;
   });
   app.stage.addChild(g);
 }
-function endDrag(ev){
+function endDrag(){
   for (const c of app.stage.children){
     if (c.dragging){ c.dragging = false; c.alpha = 1; c.cursor = 'grab'; }
   }
@@ -2899,7 +2910,7 @@ function endDrag(ev){
 function move(ev){
   for (const c of app.stage.children){
     if (c.dragging){
-      const p = ev.data.getLocalPosition(app.stage);
+      const p = ev.getLocalPosition(app.stage);
       c.x = p.x; c.y = p.y;
     }
   }
@@ -2907,7 +2918,7 @@ function move(ev){
 app.stage.on('pointermove', move);
 app.stage.on('pointerup', endDrag);
 app.stage.on('pointerupoutside', endDrag);
-return () => { app.destroy(false, { children: true, texture: true, baseTexture: true }); };
+return () => { app.destroy(false, { children: true, texture: true }); };
 `
   },
   {
@@ -2915,27 +2926,26 @@ return () => { app.destroy(false, { children: true, texture: true, baseTexture: 
     category: 'pixi',
     contextType: 'webgl',
     title: 'Pixi.js Blur Filter',
-    code: `const PIXI = await import('https://esm.sh/pixi.js@7.4.0');
-const app = new PIXI.Application({ view: canvas, width: canvas.width, height: canvas.height, background: 0x010617, antialias: true, autoStart: false });
+    code: `const PIXI = await import('https://esm.sh/pixi.js@8.5.2?bundle');
+const app = new PIXI.Application();
+await app.init({ canvas, width: canvas.width, height: canvas.height, background: 0x010617, antialias: true, autoStart: false });
 const container = new PIXI.Container();
 app.stage.addChild(container);
 const N = 30;
 const sprites = [];
 for (let i = 0; i < N; i++){
   const g = new PIXI.Graphics();
-  g.beginFill(new PIXI.Color({ h: (i / N) * 360, s: 70, v: 90 }).toNumber());
-  g.drawCircle(0, 0, 28 + Math.random() * 16);
-  g.endFill();
+  g.circle(0, 0, 28 + Math.random() * 16).fill(new PIXI.Color({ h: (i / N) * 360, s: 70, v: 90 }).toNumber());
   g.x = Math.random() * canvas.width; g.y = Math.random() * canvas.height;
   g.vx = (Math.random() - 0.5) * 4; g.vy = (Math.random() - 0.5) * 4;
   container.addChild(g); sprites.push(g);
 }
-const blur = new PIXI.BlurFilter(8, 6);
+const blur = new PIXI.BlurFilter({ strength: 8, quality: 6 });
 container.filters = [blur];
 let t = 0;
 const tick = () => {
   t += 0.012;
-  blur.blur = 4 + 6 * (0.5 + 0.5 * Math.sin(t));
+  blur.strength = 4 + 6 * (0.5 + 0.5 * Math.sin(t));
   for (const s of sprites){
     s.x += s.vx; s.y += s.vy;
     if (s.x < 0 || s.x > canvas.width) s.vx *= -1;
@@ -2943,7 +2953,7 @@ const tick = () => {
   }
 };
 app.ticker.add(tick); app.start();
-return () => { app.ticker.remove(tick); app.destroy(false, { children: true, texture: true, baseTexture: true }); };
+return () => { app.ticker.remove(tick); app.destroy(false, { children: true, texture: true }); };
 `
   },
   {
@@ -2951,8 +2961,9 @@ return () => { app.ticker.remove(tick); app.destroy(false, { children: true, tex
     category: 'pixi',
     contextType: 'webgl',
     title: 'Pixi.js Click to Spawn',
-    code: `const PIXI = await import('https://esm.sh/pixi.js@7.4.0');
-const app = new PIXI.Application({ view: canvas, width: canvas.width, height: canvas.height, background: 0x010617, antialias: true, autoStart: false });
+    code: `const PIXI = await import('https://esm.sh/pixi.js@8.5.2?bundle');
+const app = new PIXI.Application();
+await app.init({ canvas, width: canvas.width, height: canvas.height, background: 0x010617, antialias: true, autoStart: false });
 app.stage.eventMode = 'static';
 app.stage.hitArea = app.screen;
 const sparks = [];
@@ -2960,17 +2971,18 @@ function spawnAt(x, y){
   for (let i = 0; i < 28; i++){
     const g = new PIXI.Graphics();
     const c = new PIXI.Color({ h: Math.random()*360, s: 90, v: 100 }).toNumber();
-    g.beginFill(c); g.drawCircle(0, 0, 2 + Math.random() * 3); g.endFill();
+    g.circle(0, 0, 2 + Math.random() * 3).fill(c);
     g.x = x; g.y = y;
     const a = Math.random() * Math.PI * 2, sp = 2 + Math.random() * 4;
     g.vx = Math.cos(a) * sp; g.vy = Math.sin(a) * sp; g.life = 1;
     app.stage.addChild(g); sparks.push(g);
   }
 }
-app.stage.on('pointerdown', (ev) => { const p = ev.data.global; spawnAt(p.x, p.y); });
+// Pixi v8: the FederatedPointerEvent exposes .global directly (no ev.data).
+app.stage.on('pointerdown', (ev) => { spawnAt(ev.global.x, ev.global.y); });
 // Spawn one in the middle so users see something on first load.
 spawnAt(canvas.width/2, canvas.height/2);
-const hint = new PIXI.Text('Click anywhere', { fill: 0xcbd5e1, fontSize: 16 });
+const hint = new PIXI.Text({ text: 'Click anywhere', style: { fill: 0xcbd5e1, fontSize: 16 } });
 hint.x = 16; hint.y = 14; app.stage.addChild(hint);
 
 const tick = () => {
@@ -2981,7 +2993,7 @@ const tick = () => {
   }
 };
 app.ticker.add(tick); app.start();
-return () => { app.ticker.remove(tick); app.destroy(false, { children: true, texture: true, baseTexture: true }); };
+return () => { app.ticker.remove(tick); app.destroy(false, { children: true, texture: true }); };
 `
   },
   {
@@ -2989,11 +3001,12 @@ return () => { app.ticker.remove(tick); app.destroy(false, { children: true, tex
     category: 'pixi',
     contextType: 'webgl',
     title: 'Pixi.js Constellation',
-    code: `const PIXI = await import('https://esm.sh/pixi.js@7.4.0');
-const app = new PIXI.Application({ view: canvas, width: canvas.width, height: canvas.height, background: 0x010617, antialias: true, autoStart: false });
+    code: `const PIXI = await import('https://esm.sh/pixi.js@8.5.2?bundle');
+const app = new PIXI.Application();
+await app.init({ canvas, width: canvas.width, height: canvas.height, background: 0x010617, antialias: true, autoStart: false });
 const N = 70;
 const nodes = [];
-const dot = new PIXI.Graphics(); dot.beginFill(0xffffff).drawCircle(0, 0, 2).endFill();
+const dot = new PIXI.Graphics(); dot.circle(0, 0, 2).fill(0xffffff);
 const tex = app.renderer.generateTexture(dot);
 for (let i = 0; i < N; i++){
   const s = new PIXI.Sprite(tex); s.anchor.set(0.5);
@@ -3018,14 +3031,14 @@ const tick = () => {
       const d2 = dx*dx + dy*dy;
       if (d2 < R2){
         const alpha = 1 - d2 / R2;
-        lines.lineStyle({ width: 1, color: 0x22d3ee, alpha: alpha * 0.6 });
-        lines.moveTo(a.x, a.y); lines.lineTo(b.x, b.y);
+        // Pixi v8: each segment is its own path + stroke (per-segment alpha).
+        lines.moveTo(a.x, a.y).lineTo(b.x, b.y).stroke({ width: 1, color: 0x22d3ee, alpha: alpha * 0.6 });
       }
     }
   }
 };
 app.ticker.add(tick); app.start();
-return () => { app.ticker.remove(tick); app.destroy(false, { children: true, texture: true, baseTexture: true }); tex.destroy(true); };
+return () => { app.ticker.remove(tick); app.destroy(false, { children: true, texture: true }); tex.destroy(true); };
 `
   },
   {
@@ -3033,11 +3046,11 @@ return () => { app.ticker.remove(tick); app.destroy(false, { children: true, tex
     category: 'pixi',
     contextType: 'webgl',
     title: 'Pixi.js Spinning Gears',
-    code: `const PIXI = await import('https://esm.sh/pixi.js@7.4.0');
-const app = new PIXI.Application({ view: canvas, width: canvas.width, height: canvas.height, background: 0x010617, antialias: true, autoStart: false });
+    code: `const PIXI = await import('https://esm.sh/pixi.js@8.5.2?bundle');
+const app = new PIXI.Application();
+await app.init({ canvas, width: canvas.width, height: canvas.height, background: 0x010617, antialias: true, autoStart: false });
 function makeGear(teeth, r, color){
   const g = new PIXI.Graphics();
-  g.beginFill(color);
   const inner = r * 0.78, tooth = r * 1.0;
   const step = Math.PI * 2 / (teeth * 2);
   g.moveTo(tooth, 0);
@@ -3046,8 +3059,8 @@ function makeGear(teeth, r, color){
     const rr = (i % 2 === 0) ? tooth : inner;
     g.lineTo(Math.cos(a)*rr, Math.sin(a)*rr);
   }
-  g.endFill();
-  g.beginFill(0x010617); g.drawCircle(0, 0, r * 0.25); g.endFill();
+  g.fill(color);
+  g.circle(0, 0, r * 0.25).fill(0x010617);
   return g;
 }
 const cx = canvas.width / 2, cy = canvas.height / 2;
@@ -3055,13 +3068,15 @@ const g1 = makeGear(18, 90, 0x22d3ee); g1.x = cx - 70; g1.y = cy;
 const g2 = makeGear(14, 70, 0xa855f7); g2.x = cx + 80; g2.y = cy - 30;
 const g3 = makeGear(10, 50, 0xf472b6); g3.x = cx + 30; g3.y = cy + 90;
 app.stage.addChild(g1, g2, g3);
-const tick = (delta) => {
+// Pixi v8: the ticker callback receives a Ticker; read deltaTime from it.
+const tick = (ticker) => {
+  const delta = ticker.deltaTime;
   g1.rotation += 0.012 * delta;
   g2.rotation -= 0.012 * delta * (18 / 14);
   g3.rotation += 0.012 * delta * (18 / 10);
 };
 app.ticker.add(tick); app.start();
-return () => { app.ticker.remove(tick); app.destroy(false, { children: true, texture: true, baseTexture: true }); };
+return () => { app.ticker.remove(tick); app.destroy(false, { children: true, texture: true }); };
 `
   },
   {
@@ -3069,16 +3084,18 @@ return () => { app.ticker.remove(tick); app.destroy(false, { children: true, tex
     category: 'pixi',
     contextType: 'webgl',
     title: 'Pixi.js Cursor Trail',
-    code: `const PIXI = await import('https://esm.sh/pixi.js@7.4.0');
-const app = new PIXI.Application({ view: canvas, width: canvas.width, height: canvas.height, background: 0x010617, antialias: true, autoStart: false });
+    code: `const PIXI = await import('https://esm.sh/pixi.js@8.5.2?bundle');
+const app = new PIXI.Application();
+await app.init({ canvas, width: canvas.width, height: canvas.height, background: 0x010617, antialias: true, autoStart: false });
 app.stage.eventMode = 'static';
 app.stage.hitArea = app.screen;
 const trail = [];
 const g = new PIXI.Graphics();
 app.stage.addChild(g);
 let mx = canvas.width/2, my = canvas.height/2;
-app.stage.on('pointermove', (ev) => { const p = ev.data.global; mx = p.x; my = p.y; });
-const hint = new PIXI.Text('Move the cursor', { fill: 0xcbd5e1, fontSize: 16 });
+// Pixi v8: the FederatedPointerEvent exposes .global directly (no ev.data).
+app.stage.on('pointermove', (ev) => { mx = ev.global.x; my = ev.global.y; });
+const hint = new PIXI.Text({ text: 'Move the cursor', style: { fill: 0xcbd5e1, fontSize: 16 } });
 hint.x = 16; hint.y = 14; app.stage.addChild(hint);
 const tick = () => {
   trail.push({ x: mx, y: my });
@@ -3086,13 +3103,12 @@ const tick = () => {
   g.clear();
   for (let i = 1; i < trail.length; i++){
     const t = i / trail.length;
-    g.lineStyle({ width: 2 + 10 * t, color: 0x22d3ee, alpha: t });
-    g.moveTo(trail[i-1].x, trail[i-1].y);
-    g.lineTo(trail[i].x, trail[i].y);
+    // Pixi v8: build each segment then stroke it (per-segment width/alpha).
+    g.moveTo(trail[i-1].x, trail[i-1].y).lineTo(trail[i].x, trail[i].y).stroke({ width: 2 + 10 * t, color: 0x22d3ee, alpha: t });
   }
 };
 app.ticker.add(tick); app.start();
-return () => { app.ticker.remove(tick); app.destroy(false, { children: true, texture: true, baseTexture: true }); };
+return () => { app.ticker.remove(tick); app.destroy(false, { children: true, texture: true }); };
 `
   }
 ];
@@ -3149,6 +3165,10 @@ const highlightedHtml = ref('');
 const lineCount = computed(() => Math.max(1, (code.value.match(/\n/g)?.length ?? 0) + 1));
 let currentCleanup = null;
 let runToken = 0;
+// True while runSelected() is mid-flight. Prevents the ResizeObserver from kicking
+// off an overlapping run before the first one finishes — overlapping runs double-init
+// libraries like Pixi v8, whose renderer registers global extensions exactly once.
+let runInFlight = false;
 let highlighter = null;
 let highlightTimer = null;
 let exportHighlightTimer = null;
@@ -3378,45 +3398,51 @@ async function runSelected(){
   runError.value = '';
   stopCurrent();
   const myToken = ++runToken;
-
-  // Force Vue to recreate the <canvas> element via :key so the next sample
-  // can pick whatever context type it wants — a canvas can never switch
-  // context type once it has one, so we always start from a virgin element.
-  canvasKey.value++;
-  await nextTick();
-  // Wait one animation frame so the browser has actually laid out the new
-  // <canvas>; otherwise getBoundingClientRect can return zero on first paint
-  // and the sample draws into a 1x1 surface.
-  await new Promise(r => requestAnimationFrame(r));
-
-  const c = canvas.value;
-  if (!c) return;
-  const dpr = sizeCanvas(c);
-
-  // Only create the 2D context up-front for 2D samples. WebGL/WebGPU samples
-  // must call getContext themselves on a clean canvas.
-  const ctx = currentExample.value.contextType === '2d' ? c.getContext('2d') : null;
-
-  let fn;
-  try {
-    fn = new AsyncFunction('canvas', 'ctx', 'dpr', code.value || '');
-  } catch (err){
-    runError.value = 'Compile error: ' + (err && err.message ? err.message : String(err));
-    return;
-  }
+  runInFlight = true;
 
   try {
-    const result = await fn(c, ctx, dpr);
-    if (myToken !== runToken) {
-      // A newer run started while we awaited; cancel this one if it returned cleanup.
-      if (typeof result === 'function'){ try { result(); } catch(e) {} }
+    // Force Vue to recreate the <canvas> element via :key so the next sample
+    // can pick whatever context type it wants — a canvas can never switch
+    // context type once it has one, so we always start from a virgin element.
+    canvasKey.value++;
+    await nextTick();
+    // Wait one animation frame so the browser has actually laid out the new
+    // <canvas>; otherwise getBoundingClientRect can return zero on first paint
+    // and the sample draws into a 1x1 surface.
+    await new Promise(r => requestAnimationFrame(r));
+
+    const c = canvas.value;
+    if (!c) return;
+    const dpr = sizeCanvas(c);
+
+    // Only create the 2D context up-front for 2D samples. WebGL/WebGPU samples
+    // must call getContext themselves on a clean canvas.
+    const ctx = currentExample.value.contextType === '2d' ? c.getContext('2d') : null;
+
+    let fn;
+    try {
+      fn = new AsyncFunction('canvas', 'ctx', 'dpr', code.value || '');
+    } catch (err){
+      runError.value = 'Compile error: ' + (err && err.message ? err.message : String(err));
       return;
     }
-    if (typeof result === 'function') currentCleanup = result;
-  } catch (err){
-    runError.value = (err && err.message ? err.message : String(err));
-    // eslint-disable-next-line no-console
-    console.error('Playground sample error:', err);
+
+    try {
+      const result = await fn(c, ctx, dpr);
+      if (myToken !== runToken) {
+        // A newer run started while we awaited; cancel this one if it returned cleanup.
+        if (typeof result === 'function'){ try { result(); } catch(e) {} }
+        return;
+      }
+      if (typeof result === 'function') currentCleanup = result;
+    } catch (err){
+      runError.value = (err && err.message ? err.message : String(err));
+      // eslint-disable-next-line no-console
+      console.error('Playground sample error:', err);
+    }
+  } finally {
+    // Only the most recent run clears the flag, so a stale run can't unblock the gate.
+    if (myToken === runToken) runInFlight = false;
   }
 }
 
@@ -3464,13 +3490,22 @@ function buildRunnerSource(userCode, ctxType){
 
 async function runCanvasSample(canvas: any) {
   if (!canvas) return null;
-  const dpr = (globalThis as any).devicePixelRatio || 1;
-  const ctx = ${JSON.stringify(ctxType)} === "2d" ? canvas.getContext("2d") : null;
+  // NativeScript has no window.devicePixelRatio — use the screen scale instead.
+  const dpr = Screen.mainScreen.scale || 1;
+  // Size the drawing buffer to the laid-out view in device pixels. The web playground
+  // host sizes the canvas for you; on-device we must do it before running the sample
+  // (WebGPU/WebGL configure their surface from canvas.width/height).
+  const cw = canvas.clientWidth || canvas.width;
+  const ch = canvas.clientHeight || canvas.height;
+  if (cw && ch) { canvas.width = Math.round(cw * dpr); canvas.height = Math.round(ch * dpr); }
+  const ctx = ${ctxType === '2d' ? 'canvas.getContext("2d")' : 'null'};
 
   try {
-    const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor as any;
-    const fn = new AsyncFunction("canvas", "ctx", "dpr", USER_CODE);
-    const result = await fn(canvas, ctx, dpr);
+    // Wrap in an async IIFE so the sample's top-level await works. (Building an
+    // AsyncFunction via its constructor is unreliable when async is downleveled, so
+    // we let the runtime parse the async wrapper itself via new Function.)
+    const factory = new Function("canvas", "ctx", "dpr", "return (async () => {\\n" + USER_CODE + "\\n})();") as any;
+    const result = await factory(canvas, ctx, dpr);
     return typeof result === "function" ? (result as () => void) : null;
   } catch (err) {
     console.log("Canvas sample error:", err);
@@ -3479,65 +3514,124 @@ async function runCanvasSample(canvas: any) {
 }`;
 }
 
+// Each NativeScript flavor registers custom view elements through its own helper.
+// Angular/Vue/React expose registerElement; Svelte uses registerNativeViewElement;
+// Solid (via dominative) exposes registerElement. Confirmed for Angular & Vue; the
+// others use each ecosystem's documented API.
+// (Declared as a hoisted function, not a const, so the export computeds can call it
+// during setup without hitting a temporal-dead-zone error.)
+function frameworkElementRegistration(framework){
+  const map = {
+    Angular: { import: 'import { registerElement } from "@nativescript/angular";', call: 'registerElement' },
+    Vue: { import: 'import { registerElement } from "nativescript-vue";', call: 'registerElement' },
+    React: { import: 'import { registerElement } from "react-nativescript";', call: 'registerElement' },
+    Svelte: { import: 'import { registerNativeViewElement as registerElement } from "@nativescript-community/svelte-native/dom";', call: 'registerElement' },
+    Solid: { import: 'import { registerElement } from "dominative";', call: 'registerElement' },
+  };
+  return map[framework] || map.Angular;
+}
+
+function buildRegistrationSource(framework){
+  const reg = frameworkElementRegistration(framework);
+  return `// The <Canvas> element must be registered before a template can use it.
+// (@nativescript/canvas ships a CanvasModule for Angular, but it registers via a
+// CommonJS require() that resolves to undefined in ESM/.mjs bundles, so register here.)
+const canvasProto = (Canvas as any).prototype;
+if (!Object.getOwnPropertyDescriptor(canvasProto, "nodeName")?.set) {
+  // The Canvas view exposes nodeName as a getter only; framework renderers assign it.
+  Object.defineProperty(canvasProto, "nodeName", {
+    get() { return this._nodeName ?? "CANVAS"; },
+    set(value: string) { this._nodeName = value; },
+    configurable: true,
+    enumerable: true,
+  });
+}
+try {
+  ${reg.call}("Canvas", () => Canvas);
+} catch (err) {
+  // Already registered elsewhere — safe to ignore.
+}`;
+}
+
 function prepareExportAssets(example, framework){
   let userCode = example.code;
-  const extraImports = [];
-  const installNotes = [
-    `// Ensure @nativescript/canvas is installed in your NativeScript ${framework} app.`,
+  const reg = frameworkElementRegistration(framework);
+  const imports = [
+    'import { Canvas } from "@nativescript/canvas";',
+    // Browser/DOM polyfill the canvas ecosystem relies on (window, document, navigator.gpu, …).
+    'import "@nativescript/canvas-polyfill";',
+    'import { Screen } from "@nativescript/core";',
+    reg.import,
   ];
+  const installNotes = [
+    `// Ensure @nativescript/canvas and @nativescript/canvas-polyfill are installed in your NativeScript ${framework} app.`,
+  ];
+  // Libraries are imported statically (so the bundler includes them) and exposed on
+  // globalThis, because the sample body runs as a string and its own import()/require()
+  // calls cannot be resolved by the bundler.
+  const globalsSetup = [];
 
   if (example.category === 'three') {
+    imports.push('import * as THREE from "@nativescript/canvas-three";');
+    globalsSetup.push('(globalThis as any).THREE = THREE;');
     userCode = userCode.replace(
       /await import\(['"]https:\/\/esm\.sh\/three[^'"]*['"]\)/g,
-      'await import("three")'
+      'globalThis.THREE'
     );
-    extraImports.push('import "@nativescript/canvas-polyfill";');
-    installNotes.push('// Also install three and @nativescript/canvas-polyfill before using this sample.');
+    installNotes.push('// Also install three, @types/three (TypeScript), and @nativescript/canvas-three before using this sample.');
   } else if (example.category === 'pixi') {
+    imports.push('import * as PIXI from "pixi.js";');
+    imports.push('import "@nativescript/canvas-pixi";');
+    globalsSetup.push('(globalThis as any).PIXI = PIXI;');
     userCode = userCode.replace(
       /await import\(['"]https:\/\/esm\.sh\/pixi\.js[^'"]*['"]\)/g,
-      'await import("pixi.js")'
+      'globalThis.PIXI'
     );
-    extraImports.push('import "@nativescript/canvas-pixi";');
-    installNotes.push('// Also install pixi.js and @nativescript/canvas-pixi before using this sample.');
+    installNotes.push('// Also install pixi.js (v8) and @nativescript/canvas-pixi before using this sample.');
   }
 
   const slug = toKebabCase(example.id);
   const componentName = `${toPascalCase(example.id)}CanvasSample`;
+  const header = buildExportHeader(example, framework, installNotes);
+  const preamble = [
+    imports.join('\n'),
+    ...(globalsSetup.length ? [globalsSetup.join('\n')] : []),
+    header,
+    buildRegistrationSource(framework),
+    buildRunnerSource(userCode, example.contextType),
+  ].join('\n\n');
 
   return {
     slug,
     componentName,
-    extraImportsText: extraImports.join('\n'),
-    header: buildExportHeader(example, framework, installNotes),
-    runner: buildRunnerSource(userCode, example.contextType),
+    header,
+    preamble,
   };
 }
 
 function createAngularExport(example, assets){
   const templateFile = `${assets.slug}.component.html`;
   const scriptFile = `${assets.slug}.component.ts`;
-  const extraImportsBlock = assets.extraImportsText ? `${assets.extraImportsText}\n` : '';
-  const template = `<GridLayout rows="*">
-  <Canvas #canvas row="0"></Canvas>
+  // Canvas defaults to height:auto, so set width/height explicitly or it collapses.
+  const template = `<GridLayout>
+  <Canvas width="100%" height="100%" (ready)="onCanvasReady($event)"></Canvas>
 </GridLayout>
 `;
-  const script = `import { AfterViewInit, Component, ElementRef, OnDestroy, ViewChild } from "@angular/core";
-import "@nativescript/canvas";
-${extraImportsBlock}${assets.header}
-
-${assets.runner}
+  const script = `import { Component, NO_ERRORS_SCHEMA, OnDestroy } from "@angular/core";
+${assets.preamble}
 
 @Component({
   selector: "ns-${assets.slug}-canvas-sample",
   templateUrl: "./${templateFile}",
+  // NO_ERRORS_SCHEMA lets the template use NativeScript view elements (Canvas, GridLayout).
+  schemas: [NO_ERRORS_SCHEMA],
 })
-export class ${assets.componentName}Component implements AfterViewInit, OnDestroy {
-  @ViewChild("canvas", { static: false }) canvasRef?: ElementRef<any>;
+export class ${assets.componentName}Component implements OnDestroy {
   private cleanup: (() => void) | null = null;
 
-  async ngAfterViewInit() {
-    this.cleanup = await runCanvasSample(this.canvasRef?.nativeElement);
+  // The Canvas 'ready' event fires once the native view (and its GL/GPU context) exists.
+  async onCanvasReady(args: any) {
+    this.cleanup = await runCanvasSample(args.object);
   }
 
   ngOnDestroy() {
@@ -3571,12 +3665,8 @@ export class ${assets.componentName}Component implements AfterViewInit, OnDestro
 
 function createReactExport(example, assets){
   const filename = `${assets.slug}.react.tsx`;
-  const extraImportsBlock = assets.extraImportsText ? `${assets.extraImportsText}\n` : '';
   const content = `import * as React from "react";
-import "@nativescript/canvas";
-${extraImportsBlock}${assets.header}
-
-${assets.runner}
+${assets.preamble}
 
 const GridLayout: any = "gridLayout";
 const CanvasView: any = "Canvas";
@@ -3604,8 +3694,8 @@ export function ${assets.componentName}() {
   }, []);
 
   return (
-    <GridLayout rows="*">
-      <CanvasView ref={canvasRef} row={0} />
+    <GridLayout>
+      <CanvasView ref={canvasRef} width="100%" height="100%" />
     </GridLayout>
   );
 }
@@ -3626,19 +3716,15 @@ export default ${assets.componentName};
 
 function createVueExport(example, assets){
   const filename = `${assets.slug}.vue`;
-  const extraImportsBlock = assets.extraImportsText ? `${assets.extraImportsText}\n` : '';
   const content = `<template>
-  <GridLayout rows="*">
-    <Canvas ref="canvasEl" row="0" />
+  <GridLayout>
+    <Canvas ref="canvasEl" width="100%" height="100%" />
   </GridLayout>
 </template>
 
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from "vue";
-import "@nativescript/canvas";
-${extraImportsBlock}${assets.header}
-
-${assets.runner}
+${assets.preamble}
 
 const canvasEl = ref<any>(null);
 let cleanup: (() => void) | null = null;
@@ -3666,13 +3752,9 @@ onBeforeUnmount(() => {
 
 function createSvelteExport(example, assets){
   const filename = `${assets.slug}.svelte`;
-  const extraImportsBlock = assets.extraImportsText ? `${assets.extraImportsText}\n` : '';
   const content = `<script lang="ts">
-  import { onMount } from "svelte";
-  import "@nativescript/canvas";
-  ${extraImportsBlock}${assets.header}
-
-  ${assets.runner}
+import { onMount } from "svelte";
+${assets.preamble}
 
   let canvasEl: any;
   let cleanup: (() => void) | null = null;
@@ -3696,8 +3778,8 @@ function createSvelteExport(example, assets){
   });
 <\/script>
 
-<GridLayout rows="*">
-  <Canvas bind:this={canvasEl} row="0" />
+<GridLayout>
+  <Canvas bind:this={canvasEl} width="100%" height="100%" />
 </GridLayout>
 `;
   return [{
@@ -3714,12 +3796,8 @@ function createSvelteExport(example, assets){
 
 function createSolidExport(example, assets){
   const filename = `${assets.slug}.solid.tsx`;
-  const extraImportsBlock = assets.extraImportsText ? `${assets.extraImportsText}\n` : '';
   const content = `import { onCleanup, onMount } from "solid-js";
-import "@nativescript/canvas";
-${extraImportsBlock}${assets.header}
-
-${assets.runner}
+${assets.preamble}
 
 const GridLayout: any = "gridLayout";
 const CanvasView: any = "Canvas";
@@ -3739,8 +3817,8 @@ export default function ${assets.componentName}() {
   });
 
   return (
-    <GridLayout rows="*">
-      <CanvasView ref={canvasEl} row={0} />
+    <GridLayout>
+      <CanvasView ref={canvasEl} width="100%" height="100%" />
     </GridLayout>
   );
 }
@@ -3865,14 +3943,18 @@ onMounted(async () => {
 
   // Resize the backing store on container size changes, but only refit;
   // don't auto-restart the sample (that's annoying mid-edit).
+  let firstResizeFire = true;
   resizeObs = new ResizeObserver(() => {
     const c = canvas.value;
     if (!c) return;
     sizeCanvas(c);
+    // ResizeObserver always fires once when observation starts; skip that initial
+    // fire so it can't race the first runSelected() into an overlapping run.
+    if (firstResizeFire) { firstResizeFire = false; return; }
     // Static samples draw once, so resizing the backing store clears them.
     // Re-run those samples after layout settles; animated samples repaint on
-    // their next frame, so leave them alone.
-    if (currentCleanup || resizeRerunFrame) return;
+    // their next frame, so leave them alone. Never re-run while a run is in flight.
+    if (runInFlight || currentCleanup || resizeRerunFrame) return;
     resizeRerunFrame = requestAnimationFrame(() => {
       resizeRerunFrame = null;
       runSelected();
@@ -3948,7 +4030,10 @@ onUnmounted(() => {
   font-variant-numeric: tabular-nums;
 }
 .canvas-playground .subtitle { margin: 6px 0 0; font-size: 12px; color: var(--vp-c-text-2); line-height: 1.5; }
-.canvas-playground .examples { flex: 1; overflow: auto; padding: 8px 10px 12px; scrollbar-width: thin; }
+/* No top padding: a sticky .group-header pins at top:0, so any padding-top would
+   leave a sliver above it where scrolling list items peek through, half-clipped.
+   The header's own 12px top padding keeps breathing room below the Filter. */
+.canvas-playground .examples { flex: 1; overflow: auto; padding: 0 10px 12px; scrollbar-width: thin; }
 .canvas-playground .examples::-webkit-scrollbar { width: 8px; }
 .canvas-playground .examples::-webkit-scrollbar-thumb { background: var(--vp-c-divider); border-radius: 4px; }
 .canvas-playground .examples::-webkit-scrollbar-track { background: transparent; }
