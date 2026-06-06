@@ -3533,19 +3533,7 @@ function frameworkElementRegistration(framework){
 
 function buildRegistrationSource(framework){
   const reg = frameworkElementRegistration(framework);
-  return `// The <Canvas> element must be registered before a template can use it.
-// (@nativescript/canvas ships a CanvasModule for Angular, but it registers via a
-// CommonJS require() that resolves to undefined in ESM/.mjs bundles, so register here.)
-const canvasProto = (Canvas as any).prototype;
-if (!Object.getOwnPropertyDescriptor(canvasProto, "nodeName")?.set) {
-  // The Canvas view exposes nodeName as a getter only; framework renderers assign it.
-  Object.defineProperty(canvasProto, "nodeName", {
-    get() { return this._nodeName ?? "CANVAS"; },
-    set(value: string) { this._nodeName = value; },
-    configurable: true,
-    enumerable: true,
-  });
-}
+  return `// Register the <Canvas> element before templates/renderers use it.
 try {
   ${reg.call}("Canvas", () => Canvas);
 } catch (err) {
