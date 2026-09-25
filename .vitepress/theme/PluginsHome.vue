@@ -5,7 +5,7 @@ const plugins = [
   {
     name: '@nativescript/canvas',
     title: 'Canvas',
-    description: 'High-performance native Canvas APIs for 2D, WebGL, WebGL2, and WebGPU rendering in NativeScript.',
+    description: 'High-performance native Canvas APIs for 2D, WebGL, WebGL2, WebGPU and bitmaprenderer contexts in NativeScript.',
     icon: '🖼️',
     gradient: 'from-blue-500 to-cyan-500',
     href: '/canvas/',
@@ -13,7 +13,7 @@ const plugins = [
     stats: {
       contexts: '2D + WebGL + WebGPU',
       engine: 'Skia + WGPU',
-      platforms: 'iOS & Android',
+      platforms: 'iOS, tvOS, visionOS & Android',
     },
   },
   {
@@ -31,16 +31,16 @@ const plugins = [
     description: 'Browser-like DOM and Canvas polyfills for libraries that expect web globals.',
     icon: '🧩',
     gradient: 'from-teal-500 to-emerald-500',
-    href: 'https://github.com/NativeScript/canvas/tree/master/packages/canvas-polyfill/README.md',
+    href: '/plugins/canvas-polyfill',
     featured: false,
   },
   {
     name: '@nativescript/canvas-media',
     title: 'Canvas Media',
-    description: 'Media integration utilities for the NativeScript canvas stack.',
+    description: 'Video and audio views that double as 2D, WebGL and zero-copy WebGPU frame sources.',
     icon: '🎬',
     gradient: 'from-rose-500 to-orange-500',
-    href: 'https://github.com/NativeScript/canvas/tree/master/packages/canvas-media/README.md',
+    href: '/plugins/canvas-media',
     featured: false,
   },
   {
@@ -49,7 +49,7 @@ const plugins = [
     description: 'Three.js integration for rendering advanced 3D scenes with NativeScript canvas.',
     icon: '🧊',
     gradient: 'from-sky-500 to-blue-600',
-    href: 'https://github.com/NativeScript/canvas/tree/master/packages/canvas-three/README.md',
+    href: '/plugins/adapters#three-js',
     featured: false,
   },
   {
@@ -58,7 +58,7 @@ const plugins = [
     description: 'PixiJS adapter for performant 2D graphics and animation pipelines.',
     icon: '✨',
     gradient: 'from-fuchsia-500 to-pink-500',
-    href: 'https://github.com/NativeScript/canvas/tree/master/packages/canvas-pixi/README.md',
+    href: '/plugins/adapters#pixi',
     featured: false,
   },
   {
@@ -67,7 +67,7 @@ const plugins = [
     description: 'Phaser integration for building native 2D games in NativeScript.',
     icon: '🎮',
     gradient: 'from-amber-500 to-orange-500',
-    href: 'https://github.com/NativeScript/canvas/tree/master/packages/canvas-phaser/README.md',
+    href: '/plugins/adapters#phaser',
     featured: false,
   },
   {
@@ -76,16 +76,16 @@ const plugins = [
     description: 'Phaser CE support for legacy game projects on NativeScript canvas.',
     icon: '🕹️',
     gradient: 'from-slate-500 to-zinc-700',
-    href: 'https://github.com/NativeScript/canvas/tree/master/packages/canvas-phaser-ce/README.md',
+    href: '/plugins/adapters#phaser-ce',
     featured: false,
   },
   {
     name: '@nativescript/canvas-svg',
     title: 'Canvas SVG',
-    description: 'SVG rendering package built on top of NativeScript canvas APIs.',
+    description: 'Native SVG with SMIL and CSS animation, a scriptable DOM, and GPU rendering.',
     icon: '📐',
     gradient: 'from-cyan-500 to-sky-600',
-    href: 'https://github.com/NativeScript/canvas/tree/master/packages/canvas-svg/README.md',
+    href: '/canvas-svg/',
     featured: false,
   },
   {
@@ -94,7 +94,7 @@ const plugins = [
     description: 'Chart.js adapter package for rendering charts through NativeScript canvas.',
     icon: '📊',
     gradient: 'from-lime-500 to-emerald-600',
-    href: 'https://github.com/NativeScript/canvas/tree/master/packages/canvas-chartjs/README.md',
+    href: '/plugins/adapters#chart-js',
     featured: false,
   },
   {
@@ -103,7 +103,7 @@ const plugins = [
     description: 'Babylon integration package for high-end 3D and scene workflows.',
     icon: '🌌',
     gradient: 'from-violet-500 to-indigo-600',
-    href: 'https://github.com/NativeScript/canvas/tree/master/packages/canvas-babylon/README.md',
+    href: '/plugins/adapters#babylon-js',
     featured: false,
   },
 ];
@@ -304,7 +304,7 @@ onBeforeUnmount(() => {
             </div>
             <div class="flex items-center gap-2">
               <div class="h-2 w-2 animate-pulse rounded-full bg-blue-500"></div>
-              <span>iOS & Android</span>
+              <span>iOS, tvOS, visionOS & Android</span>
             </div>
             <div class="flex items-center gap-2">
               <div class="h-2 w-2 animate-pulse rounded-full bg-orange-500"></div>

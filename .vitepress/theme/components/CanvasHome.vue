@@ -167,7 +167,7 @@ onBeforeUnmount(() => {
         </a>
         <a href="/canvas/" class="canvas-home-link-panel">
           <span>Canvas Docs</span>
-          <strong>Set up @nativescript/canvas and render with native iOS and Android surfaces.</strong>
+          <strong>Set up @nativescript/canvas and render with native iOS, tvOS, visionOS and Android surfaces.</strong>
         </a>
         <a href="/canvas/guides/webgl-recipes" class="canvas-home-link-panel">
           <span>Rendering Recipes</span>

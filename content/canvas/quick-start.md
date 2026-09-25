@@ -40,10 +40,7 @@ export function canvasReady(args) {
 
 ## WebGPU example
 
-WebGPU requires newer platform support:
-
-- Minimum iOS: 11
-- Minimum Android: 27
+WebGPU needs `navigator.gpu`, which [`@nativescript/canvas-polyfill`](/plugins/canvas-polyfill) provides. On Android it needs API 27 or later. See [Platform support](/canvas/installation#platform-support).
 
 ```ts
 import type { GPUAdapter, GPUDevice } from '@nativescript/canvas';

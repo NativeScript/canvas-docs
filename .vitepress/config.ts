@@ -49,6 +49,7 @@ export default defineConfig({
         { text: 'Home', link: '/' },
       { text: 'Playground', link: '/canvas-playground/' },
       { text: 'Canvas', link: '/canvas/' },
+      { text: 'SVG', link: '/canvas-svg/' },
       { text: 'Audio Context', link: '/audio-context/' },
         { text: 'Packages', link: '/plugins/' },
       { text: 'GitHub', link: 'https://github.com/NativeScript/canvas' },
@@ -57,20 +58,15 @@ export default defineConfig({
     sidebar: {
       '/plugins/': [
         {
-            text: 'Packages',
+          text: 'Packages',
           items: [
-              { text: 'Overview', link: '/plugins/' },
-              { text: '@nativescript/canvas', link: '/canvas/' },
-              { text: '@nativescript/audio-context', link: '/audio-context/' },
-              { text: '@nativescript/canvas-polyfill', link: 'https://github.com/NativeScript/canvas/tree/master/packages/canvas-polyfill/README.md' },
-              { text: '@nativescript/canvas-media', link: 'https://github.com/NativeScript/canvas/tree/master/packages/canvas-media/README.md' },
-              { text: '@nativescript/canvas-three', link: 'https://github.com/NativeScript/canvas/tree/master/packages/canvas-three/README.md' },
-              { text: '@nativescript/canvas-pixi', link: 'https://github.com/NativeScript/canvas/tree/master/packages/canvas-pixi/README.md' },
-              { text: '@nativescript/canvas-phaser', link: 'https://github.com/NativeScript/canvas/tree/master/packages/canvas-phaser/README.md' },
-              { text: '@nativescript/canvas-phaser-ce', link: 'https://github.com/NativeScript/canvas/tree/master/packages/canvas-phaser-ce/README.md' },
-              { text: '@nativescript/canvas-svg', link: 'https://github.com/NativeScript/canvas/tree/master/packages/canvas-svg/README.md' },
-              { text: '@nativescript/canvas-chartjs', link: 'https://github.com/NativeScript/canvas/tree/master/packages/canvas-chartjs/README.md' },
-              { text: '@nativescript/canvas-babylon', link: 'https://github.com/NativeScript/canvas/tree/master/packages/canvas-babylon/README.md' },
+            { text: 'Overview', link: '/plugins/' },
+            { text: '@nativescript/canvas', link: '/canvas/' },
+            { text: '@nativescript/canvas-svg', link: '/canvas-svg/' },
+            { text: '@nativescript/audio-context', link: '/audio-context/' },
+            { text: '@nativescript/canvas-polyfill', link: '/plugins/canvas-polyfill' },
+            { text: '@nativescript/canvas-media', link: '/plugins/canvas-media' },
+            { text: 'Framework Adapters', link: '/plugins/adapters' },
           ],
         },
       ],
@@ -81,6 +77,7 @@ export default defineConfig({
             { text: 'Introduction', link: '/canvas/' },
             { text: 'Installation', link: '/canvas/installation' },
             { text: 'Quick Start', link: '/canvas/quick-start' },
+            { text: 'Upgrading to 3.0', link: '/canvas/upgrading' },
           ],
         },
         {
@@ -90,9 +87,36 @@ export default defineConfig({
             { text: 'Canvas 2D Recipes', link: '/canvas/guides/canvas-2d-recipes' },
             { text: 'WebGL Recipes', link: '/canvas/guides/webgl-recipes' },
             { text: 'WebGPU Recipes', link: '/canvas/guides/webgpu-recipes' },
+            { text: 'Images and ImageBitmap', link: '/canvas/guides/images-and-bitmaps' },
+            { text: 'Fonts', link: '/canvas/guides/fonts' },
+          ],
+        },
+        {
+          text: 'Reference',
+          items: [
             { text: 'Rendering Contexts', link: '/canvas/rendering-contexts' },
+            { text: 'Events and Input', link: '/canvas/events' },
+            { text: 'Performance', link: '/canvas/performance' },
             { text: 'API Overview', link: '/canvas/api' },
             { text: 'Ecosystem Packages', link: '/canvas/ecosystem' },
+          ],
+        },
+      ],
+      '/canvas-svg/': [
+        {
+          text: 'Getting Started',
+          items: [
+            { text: 'Introduction', link: '/canvas-svg/' },
+          ],
+        },
+        {
+          text: 'Guides',
+          items: [
+            { text: 'Properties and Events', link: '/canvas-svg/guides/properties-and-events' },
+            { text: 'Building SVG with the DOM', link: '/canvas-svg/guides/dom' },
+            { text: 'Animation', link: '/canvas-svg/guides/animation' },
+            { text: 'Drawing SVG into a Canvas', link: '/canvas-svg/guides/canvas-integration' },
+            { text: 'Rendering and Performance', link: '/canvas-svg/guides/performance' },
           ],
         },
       ],

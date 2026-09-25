@@ -1,25 +1,22 @@
 # Packages
 
-This catalog tracks the packages published from the NativeScript/canvas monorepo.
+These packages are published from the NativeScript/canvas monorepo. The 3.x packages need NativeScript 9.1 or later, and should be upgraded together.
 
-## Core docs in this site
+## Core
 
-- [@nativescript/canvas](/canvas/)
-- [@nativescript/audio-context](/audio-context/)
+- [@nativescript/canvas](/canvas/): 2D, WebGL, WebGL2, WebGPU and bitmaprenderer contexts
+- [@nativescript/canvas-svg](/canvas-svg/): native SVG with animation, DOM scripting and GPU rendering
+- [@nativescript/audio-context](/audio-context/): the Web Audio API
 
-## Additional ecosystem packages
+## Supporting packages
 
-- [@nativescript/canvas-polyfill](https://github.com/NativeScript/canvas/tree/master/packages/canvas-polyfill/README.md)
-- [@nativescript/canvas-media](https://github.com/NativeScript/canvas/tree/master/packages/canvas-media/README.md)
-- [@nativescript/canvas-three](https://github.com/NativeScript/canvas/tree/master/packages/canvas-three/README.md)
-- [@nativescript/canvas-pixi](https://github.com/NativeScript/canvas/tree/master/packages/canvas-pixi/README.md)
-- [@nativescript/canvas-phaser](https://github.com/NativeScript/canvas/tree/master/packages/canvas-phaser/README.md)
-- [@nativescript/canvas-phaser-ce](https://github.com/NativeScript/canvas/tree/master/packages/canvas-phaser-ce/README.md)
-- [@nativescript/canvas-svg](https://github.com/NativeScript/canvas/tree/master/packages/canvas-svg/README.md)
-- [@nativescript/canvas-chartjs](https://github.com/NativeScript/canvas/tree/master/packages/canvas-chartjs/README.md)
-- [@nativescript/canvas-babylon](https://github.com/NativeScript/canvas/tree/master/packages/canvas-babylon/README.md)
+- [@nativescript/canvas-polyfill](/plugins/canvas-polyfill): browser globals for web graphics code
+- [@nativescript/canvas-media](/plugins/canvas-media): video and audio views that also act as frame sources
 
-## Source of truth
+## Framework adapters
+
+- [Three.js, Pixi, Chart.js, Phaser, Phaser CE and Babylon.js](/plugins/adapters)
+
+## Source
 
 - [NativeScript/canvas repository](https://github.com/NativeScript/canvas)
-- [Monorepo package list](https://github.com/NativeScript/canvas/blob/master/README.md)

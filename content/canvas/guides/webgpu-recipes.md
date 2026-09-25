@@ -216,6 +216,122 @@ const device = await adapter.requestDevice();
 console.log('device ready', !!device);
 ```
 
+## 9. Depth attachments
+
+Give load and store ops for each aspect your depth format actually has. A depth-only format such as `depth24plus` takes only the depth ops:
+
+```ts
+const depthTexture = device.createTexture({
+  size: [canvas.width, canvas.height],
+  format: 'depth24plus',
+  usage: GPUTextureUsage.RENDER_ATTACHMENT,
+});
+
+const pass = encoder.beginRenderPass({
+  colorAttachments: [/* ... */],
+  depthStencilAttachment: {
+    view: depthTexture.createView(),
+    depthClearValue: 1.0,
+    depthLoadOp: 'clear',
+    depthStoreOp: 'store',
+    // no stencil ops: depth24plus has no stencil aspect
+  },
+});
+```
+
+A format with stencil, such as `depth24plus-stencil8`, also needs `stencilLoadOp` and `stencilStoreOp`. This follows the spec. Before 3.0, missing ops were filled in with `'load'` and `'store'`, which broke depth-only formats.
+
+## 10. Video frames as a texture
+
+`copyExternalImageToTexture` accepts a video directly. When the destination texture includes `RENDER_ATTACHMENT` in its usage, the decoded frame is copied on the GPU, with no trip through CPU memory.
+
+```ts
+import '@nativescript/canvas-polyfill'; // document.createElement('video'), backed by canvas-media
+
+const video = document.createElement('video');
+video.loop = true;
+video.muted = true;
+video.src = '~/assets/video.mp4';
+await video.play();
+
+const [w, h] = [640, 360];
+const videoTexture = device.createTexture({
+  size: [w, h, 1],
+  format: 'rgba8unorm',
+  usage:
+    GPUTextureUsage.TEXTURE_BINDING |
+    GPUTextureUsage.COPY_DST |
+    GPUTextureUsage.RENDER_ATTACHMENT, // enables the zero-copy path
+});
+
+function frame() {
+  device.queue.copyExternalImageToTexture({ source: video }, { texture: videoTexture }, [w, h, 1]);
+  // Bind videoTexture.createView() as a regular texture_2d<f32> and draw.
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+```
+
+```wgsl
+@group(0) @binding(0) var samp: sampler;
+@group(0) @binding(1) var tex: texture_2d<f32>;
+
+@fragment
+fn fs_main(@location(0) uv: vec2f) -> @location(0) vec4f {
+  return textureSample(tex, samp, uv);
+}
+```
+
+- **iOS, tvOS, visionOS (Metal):** the frame is imported on the GPU.
+- **Android:** this works only on API 29+, and only when the video decoder outputs RGB buffers. Most hardware decoders output YCbCr, and on those devices video frames cannot reach a WebGPU texture yet. On Android, use WebGL `texImage2D` or 2D `drawImage` for video.
+- Keep a single long-lived texture. If no new frame has been decoded since the last copy, the copy is skipped and the texture keeps the previous frame.
+- To sample the video directly in a shader, without a copy, use [`importExternalTexture`](#_11-sampling-video-with-importexternaltexture).
+
+## 11. Sampling video with importExternalTexture
+
+`importExternalTexture` wraps the current video frame as a `GPUExternalTexture`. Your shader samples the frame directly, with no intermediate copy or texture.
+
+```ts
+const pipeline = device.createRenderPipeline({
+  layout: 'auto',
+  vertex: { module: device.createShaderModule({ code: quadWGSL }) },
+  fragment: {
+    module: device.createShaderModule({ code: videoWGSL }),
+    targets: [{ format }],
+  },
+});
+
+const sampler = device.createSampler({ magFilter: 'linear', minFilter: 'linear' });
+
+function frame() {
+  const bindGroup = device.createBindGroup({
+    layout: pipeline.getBindGroupLayout(0),
+    entries: [
+      { binding: 1, resource: sampler },
+      { binding: 2, resource: device.importExternalTexture({ source: video }) },
+    ],
+  });
+  // Encode a render pass that uses bindGroup, then submit.
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+```
+
+```wgsl
+@group(0) @binding(1) var mySampler: sampler;
+@group(0) @binding(2) var myTexture: texture_external;
+
+@fragment
+fn main(@location(0) uv: vec2f) -> @location(0) vec4f {
+  return textureSampleBaseClampToEdge(myTexture, mySampler, uv);
+}
+```
+
+- Import every frame, as on the web. If the decoder has no new frame yet, you get the previous one back.
+- `source` must be a video element, either from `document.createElement('video')` or a canvas-media `Video`. `VideoFrame` sources are not supported.
+- Supported on iOS, tvOS and visionOS. On Android it throws `NotSupportedError`; use [recipe 10](#_10-video-frames-as-a-texture) or WebGL there instead.
+- Once `await video.play()` resolves, a frame is available, as on the web. Calling it before `play()` has resolved, or before the video has loaded, throws `InvalidStateError`.
+
 ## More guides
 
 - [Web API Samples](/canvas/guides/web-api-samples)

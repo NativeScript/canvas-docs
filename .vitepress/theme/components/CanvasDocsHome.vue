@@ -13,11 +13,11 @@ const rootRef = ref<HTMLElement | null>(null);
           <span>@nativescript/canvas</span>
         </h2>
         <p class="canvas-docs-lede">
-          Bring web-style canvas APIs to NativeScript with native-backed rendering for <code>2d</code>, <code>webgl</code>, <code>webgl2</code>, and <code>webgpu</code>.
+          Bring web-style canvas APIs to NativeScript with native-backed rendering for <code>2d</code>, <code>webgl</code>, <code>webgl2</code>, <code>webgpu</code> and <code>bitmaprenderer</code>.
         </p>
 
         <div class="canvas-docs-chip-row">
-          <span>iOS + Android</span>
+          <span>iOS, tvOS, visionOS + Android</span>
           <span>Skia-backed rendering</span>
           <span>GPU-ready workflows</span>
           <span>Web API muscle memory</span>
@@ -53,6 +53,10 @@ const rootRef = ref<HTMLElement | null>(null);
     <section>
       <h2>Start where your project is headed</h2>
       <div class="canvas-docs-link-grid">
+        <a href="/canvas/upgrading">
+          <strong>New in 3.0</strong>
+          <span>Requirements, new features and behaviour changes when upgrading from 2.x.</span>
+        </a>
         <a href="/canvas/installation">
           <strong>Installation</strong>
           <span>Get the package into your app and ready to render.</span>
@@ -77,6 +81,14 @@ const rootRef = ref<HTMLElement | null>(null);
           <strong>WebGPU Recipes</strong>
           <span>Explore newer GPU workflows and rendering experiments.</span>
         </a>
+        <a href="/canvas/guides/images-and-bitmaps">
+          <strong>Images and ImageBitmap</strong>
+          <span>Load images, create bitmaps from any source, and composite canvases.</span>
+        </a>
+        <a href="/canvas/performance">
+          <strong>Performance</strong>
+          <span>Measured costs per operation, and the practices that keep frames fast.</span>
+        </a>
         <a href="/canvas/rendering-contexts">
           <strong>Rendering Contexts</strong>
           <span>Compare the capabilities and tradeoffs of each mode.</span>
@@ -88,6 +100,10 @@ const rootRef = ref<HTMLElement | null>(null);
         <a href="/canvas/ecosystem">
           <strong>Ecosystem Packages</strong>
           <span>See how canvas connects with the broader NativeScript graphics stack.</span>
+        </a>
+        <a href="/canvas-svg/">
+          <strong>@nativescript/canvas-svg</strong>
+          <span>Animated, scriptable SVG rendered natively on the GPU.</span>
         </a>
         <a href="/audio-context/">
           <strong>@nativescript/audio-context</strong>

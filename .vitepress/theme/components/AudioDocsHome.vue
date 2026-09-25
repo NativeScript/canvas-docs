@@ -11,7 +11,7 @@ const rootRef = ref<HTMLElement | null>(null);
         <p class="audio-docs-kicker">Native audio graphs with a web-audio mental model</p>
         <h2>@nativescript/audio-context</h2>
         <p class="audio-docs-lede">
-          Build playback, synthesis, effects, routing, and offline rendering pipelines on iOS and Android with a familiar <code>AudioContext</code>-style API.
+          Build playback, synthesis, effects, routing, and offline rendering pipelines on iOS, tvOS, visionOS and Android with a familiar <code>AudioContext</code>-style API.
         </p>
 
         <div class="audio-docs-chip-row">

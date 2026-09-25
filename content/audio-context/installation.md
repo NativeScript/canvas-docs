@@ -17,6 +17,11 @@ Or install with npm:
 npm install @nativescript/audio-context
 ```
 
+## Requirements
+
+- `@nativescript/audio-context` 2.x requires **NativeScript 9.1 or later**. Pair it with `@nativescript/canvas` 3.x if you use both packages.
+- Supported platforms: iOS, tvOS, visionOS and Android. The tvOS simulator build is arm64 only, so use an Apple silicon Mac to run it in the simulator.
+
 ## Verify setup
 
 Create a context and log the initial state:
