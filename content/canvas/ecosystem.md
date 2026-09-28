@@ -13,6 +13,7 @@ The NativeScript canvas repository publishes more than the base Canvas package. 
 | [`@nativescript/canvas-polyfill`](/plugins/canvas-polyfill) | `window`, `document`, `Image`, `navigator.gpu` and other browser globals |
 | [`@nativescript/canvas-media`](/plugins/canvas-media) | `Video` and `Audio` views that also act as frame sources |
 | [`@nativescript/audio-context`](/audio-context/) | The Web Audio API |
+| [`@nativescript/canvas-gamepad`](/plugins/canvas-gamepad) | The Gamepad API: `navigator.getGamepads()` and connection events |
 | [Framework adapters](/plugins/adapters) | Three.js, Pixi, Chart.js, Phaser, Phaser CE and Babylon.js |
 
 ## Upstream source

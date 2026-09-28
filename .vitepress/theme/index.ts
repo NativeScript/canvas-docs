@@ -15,6 +15,7 @@ import CanvasDocsHome from './components/CanvasDocsHome.vue';
 import CanvasHeroMiniDemo from './components/CanvasHeroMiniDemo.vue';
 import AudioDocsHome from './components/AudioDocsHome.vue';
 import CanvasPlayground from './components/CanvasPlayground.vue';
+import GamepadLiveDemo from './components/GamepadLiveDemo.vue';
 import NativeScriptNavTitle from './components/NativeScriptNavTitle.vue';
 import NativeScriptFooter from './components/NativeScriptFooter.vue';
 
@@ -41,5 +42,6 @@ export default {
     app.component('CanvasHeroMiniDemo', CanvasHeroMiniDemo);
     app.component('AudioDocsHome', AudioDocsHome);
     app.component('CanvasPlayground', CanvasPlayground);
+    app.component('GamepadLiveDemo', GamepadLiveDemo);
   },
 };
