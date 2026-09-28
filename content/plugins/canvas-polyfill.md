@@ -32,6 +32,7 @@ The [framework adapters](/plugins/adapters) (Three.js, Pixi, Phaser, Babylon) im
 | Data | `XMLHttpRequest` (supports `file://`, `~/`, `blob:` and `data:` URLs), `Blob`, `FileReader`, `URL.createObjectURL`, `TextEncoder`, `TextDecoder`, `AbortController` |
 | Media | `VideoFrame`, `VideoColorSpace` |
 | Audio | If [`@nativescript/audio-context`](/audio-context/) is installed: `AudioContext`, `OfflineAudioContext` and every node type |
+| Gamepad | If [`@nativescript/canvas-gamepad`](/plugins/canvas-gamepad) is installed: `navigator.getGamepads()` and the `gamepadconnected` / `gamepaddisconnected` window events |
 
 `fetch` is not polyfilled here. It comes from `@nativescript/core`.
 

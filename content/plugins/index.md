@@ -12,6 +12,7 @@ These packages are published from the NativeScript/canvas monorepo. The 3.x pack
 
 - [@nativescript/canvas-polyfill](/plugins/canvas-polyfill): browser globals for web graphics code
 - [@nativescript/canvas-media](/plugins/canvas-media): video and audio views that also act as frame sources
+- [@nativescript/canvas-gamepad](/plugins/canvas-gamepad): the Gamepad API for game controllers
 
 ## Framework adapters
 

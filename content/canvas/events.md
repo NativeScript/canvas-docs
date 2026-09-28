@@ -1,6 +1,6 @@
 ---
 title: Events and Input
-description: Canvas lifecycle events, pointer and touch input, Android surface events and tvOS remote keys.
+description: Canvas lifecycle events, pointer and touch input, Android surface events, tvOS remote keys and game controllers.
 ---
 
 # Events and Input
@@ -64,3 +64,7 @@ canvas.addEventListener('keydown', (e) => {
 ```
 
 When the canvas is attached, it takes focus. Presses still continue up the responder chain afterwards, so the system behaviour stays intact: for example, Menu still returns to the home screen.
+
+## Game controllers
+
+For full controller state (both sticks, analog triggers and every button) on iOS, tvOS, Android and Windows, use the web Gamepad API through [`@nativescript/canvas-gamepad`](/plugins/canvas-gamepad).

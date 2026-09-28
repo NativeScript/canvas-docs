@@ -66,6 +66,7 @@ export default defineConfig({
             { text: '@nativescript/audio-context', link: '/audio-context/' },
             { text: '@nativescript/canvas-polyfill', link: '/plugins/canvas-polyfill' },
             { text: '@nativescript/canvas-media', link: '/plugins/canvas-media' },
+            { text: '@nativescript/canvas-gamepad', link: '/plugins/canvas-gamepad' },
             { text: 'Framework Adapters', link: '/plugins/adapters' },
           ],
         },
