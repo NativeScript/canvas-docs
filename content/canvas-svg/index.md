@@ -5,11 +5,11 @@ description: Native SVG rendering for NativeScript with SMIL and CSS animation, 
 
 # @nativescript/canvas-svg
 
-`@nativescript/canvas-svg` renders SVG natively on iOS, tvOS, visionOS and Android with Skia. Version 3.0 is a ground-up rewrite.
+`@nativescript/canvas-svg` renders SVG natively on iOS, tvOS, visionOS, Android, Windows and Linux with Skia. Version 3.0 is a ground-up rewrite.
 
 - **Animation included.** SMIL (`<animate>`, `<animateTransform>`, `<animateMotion>`, `<set>`) and CSS `@keyframes` play without any extra code.
 - **A real DOM.** When [`@nativescript/canvas-polyfill`](/plugins/canvas-polyfill) is installed, you can build and change an SVG with `document.createElementNS`, `setAttribute` and `appendChild`, as in a browser.
-- **GPU rasterization.** Metal on Apple platforms, and Vulkan or GL on Android. Drawing happens off the UI thread, and the view falls back to the CPU automatically.
+- **GPU rasterization.** Metal on Apple platforms, and Vulkan or GL on Android. Drawing happens off the UI thread, and the view falls back to the CPU automatically. Windows and Linux rasterize on the CPU.
 - **Works as a canvas image source.** You can pass an SVG to `drawImage`, `createPattern`, `createImageBitmap`, `texImage2D` and WebGPU's `copyExternalImageToTexture`.
 
 ## Installation
@@ -42,6 +42,7 @@ Any animations in the source start once the view is loaded, and pause while it i
 ## Guides
 
 - [Properties and Events](/canvas-svg/guides/properties-and-events)
+- [Styling](/canvas-svg/guides/styling)
 - [Building SVG with the DOM](/canvas-svg/guides/dom)
 - [Animation](/canvas-svg/guides/animation)
 - [Drawing SVG into a Canvas](/canvas-svg/guides/canvas-integration)

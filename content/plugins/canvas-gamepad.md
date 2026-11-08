@@ -1,6 +1,6 @@
 ---
 title: '@nativescript/canvas-gamepad'
-description: The web Gamepad API (navigator.getGamepads, gamepadconnected and gamepaddisconnected) for game controllers on iOS, Android and Windows.
+description: The web Gamepad API (navigator.getGamepads, gamepadconnected and gamepaddisconnected) for game controllers on iOS, Android, Windows and Linux.
 ---
 
 # @nativescript/canvas-gamepad
@@ -239,6 +239,7 @@ export function onUnloaded() {
 | iOS, tvOS, visionOS | GameController (`GCExtendedGamepad`) | The package sets `valueChangedHandler` on each controller, replacing any handler your own code set. |
 | Android | Gamepad and joystick `KeyEvent` / `MotionEvent` | Input from connected controllers is consumed at the activity window, so B no longer triggers Back while the API is in use. |
 | Windows | `Windows.Gaming.Input.Gamepad` | 16 buttons: there is no Guide button. |
+| Linux | evdev, through [gilrs](https://gitlab.com/gilrs-project/gilrs) and SDL's controller database | The app needs read access to `/dev/input/event*`. Desktop sessions normally grant it for gamepads; otherwise add the user to the `input` group or add a udev rule. |
 
 On tvOS the Siri Remote is not a gamepad. It keeps sending `keydown` and `keyup` events, as described in [Events and Input](/canvas/events#keyboard-and-tvos-remote).
 

@@ -89,6 +89,7 @@ export default defineConfig({
             { text: 'WebGL Recipes', link: '/canvas/guides/webgl-recipes' },
             { text: 'WebGPU Recipes', link: '/canvas/guides/webgpu-recipes' },
             { text: 'Images and ImageBitmap', link: '/canvas/guides/images-and-bitmaps' },
+            { text: 'OffscreenCanvas and Workers', link: '/canvas/guides/offscreen-canvas' },
             { text: 'Fonts', link: '/canvas/guides/fonts' },
           ],
         },
@@ -99,6 +100,7 @@ export default defineConfig({
             { text: 'Events and Input', link: '/canvas/events' },
             { text: 'Performance', link: '/canvas/performance' },
             { text: 'API Overview', link: '/canvas/api' },
+            { text: 'Web API Compatibility', link: '/canvas/compatibility' },
             { text: 'Ecosystem Packages', link: '/canvas/ecosystem' },
           ],
         },
@@ -114,6 +116,7 @@ export default defineConfig({
           text: 'Guides',
           items: [
             { text: 'Properties and Events', link: '/canvas-svg/guides/properties-and-events' },
+            { text: 'Styling', link: '/canvas-svg/guides/styling' },
             { text: 'Building SVG with the DOM', link: '/canvas-svg/guides/dom' },
             { text: 'Animation', link: '/canvas-svg/guides/animation' },
             { text: 'Drawing SVG into a Canvas', link: '/canvas-svg/guides/canvas-integration' },

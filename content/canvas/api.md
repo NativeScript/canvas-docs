@@ -14,9 +14,11 @@ description: API surface overview and compatibility notes for @nativescript/canv
 - WebGPU is aligned with modern WebGPU APIs.
 - `bitmaprenderer` follows the ImageBitmapRenderingContext spec.
 
+For the members that are no-ops or not available yet, see [Web API Compatibility](/canvas/compatibility).
+
 ## Globals
 
-Importing `@nativescript/canvas` installs these as globals: `CanvasRenderingContext2D`, `WebGLRenderingContext`, `WebGL2RenderingContext`, `ImageBitmapRenderingContext`, `CanvasGradient`, `CanvasPattern`, `Path2D`, `DOMMatrix`, `ImageData`, `ImageBitmap`, `ImageAsset`, `TextEncoder`, `TextDecoder`, `FontFace`, `fonts`, `TouchEvent`, `PointerEvent`, `CustomEvent`, and the WebGPU flag enums (`GPUBufferUsage`, `GPUTextureUsage`, `GPUMapMode`, `GPUShaderStage`).
+Importing `@nativescript/canvas` installs these as globals: `OffscreenCanvas`, `OffscreenCanvasRenderingContext2D`, `CanvasRenderingContext2D`, `WebGLRenderingContext`, `WebGL2RenderingContext`, `ImageBitmapRenderingContext`, `CanvasGradient`, `CanvasPattern`, `Path2D`, `DOMMatrix`, `ImageData`, `ImageBitmap`, `ImageAsset`, `TextEncoder`, `TextDecoder`, `FontFace`, `fonts`, `TouchEvent`, `PointerEvent`, `CustomEvent`, and the WebGPU flag enums (`GPUBufferUsage`, `GPUTextureUsage`, `GPUMapMode`, `GPUShaderStage`).
 
 For `window`, `document`, `navigator.gpu`, `createImageBitmap` and `Image`, add [`@nativescript/canvas-polyfill`](/plugins/canvas-polyfill).
 
@@ -34,8 +36,23 @@ For `window`, `document`, `navigator.gpu`, `createImageBitmap` and `Image`, add 
 | Member | Description |
 | --- | --- |
 | `snapshot(flip?)` | Returns the current pixels as a `@nativescript/core` `ImageSource`. |
+| `transferControlToOffscreen()` | Standard. Returns an `OffscreenCanvas` that draws into this view. See [OffscreenCanvas and Workers](/canvas/guides/offscreen-canvas). |
+| `Canvas.threaded2D`, `Canvas.threadedWebGL` | Static. The default for the `threaded` context attribute: `true` on Android, iOS and Windows. Set them before calling `getContext`. See [Threaded rendering](/canvas/performance#threaded-rendering). |
 | `Canvas.forceGL` | Static. Use GL instead of Metal or Vulkan for 2D. Set it before calling `getContext`. |
 | `Canvas.useSurface` | Static, Android only. Use a `SurfaceView` instead of a `TextureView`. |
+
+## Workers
+
+In a Worker, import `@nativescript/canvas/worker` instead of `@nativescript/canvas`. It has the same API without the `Canvas` view. See [OffscreenCanvas and Workers](/canvas/guides/offscreen-canvas#rendering-in-a-worker).
+
+## ImageAsset extras
+
+| Method | Description |
+| --- | --- |
+| `toImageSource()`, `toImageSourceSync()` | Returns the pixels as a `@nativescript/core` `ImageSource`. |
+| `toNativeImage()`, `toNativeImageSync()` | Returns the pixels as the platform's image type: `Bitmap`, `UIImage`, `WriteableBitmap` or `GdkTexture`. |
+
+See [Images and ImageBitmap](/canvas/guides/images-and-bitmaps#showing-an-asset-in-an-image).
 
 ## Type imports
 
@@ -65,7 +82,9 @@ import type {
 - [Canvas 2D Recipes](/canvas/guides/canvas-2d-recipes)
 - [WebGL Recipes](/canvas/guides/webgl-recipes)
 - [WebGPU Recipes](/canvas/guides/webgpu-recipes)
+- [Web API Compatibility](/canvas/compatibility)
 - [Rendering Contexts](/canvas/rendering-contexts)
 - [Images and ImageBitmap](/canvas/guides/images-and-bitmaps)
+- [OffscreenCanvas and Workers](/canvas/guides/offscreen-canvas)
 - [Events and Input](/canvas/events)
 - [Ecosystem Packages](/canvas/ecosystem)

@@ -19,7 +19,11 @@ npm install @nativescript/canvas
 
 `@nativescript/canvas` 3.x requires **NativeScript 9.1 or later** (`@nativescript/core`, `@nativescript/ios` and `@nativescript/android`). 3.x is built directly against the V8 engine in those runtimes, so older runtimes cannot load it. If you are on an older version, see [Upgrading to 3.0](/canvas/upgrading).
 
+Windows and Linux use the NativeScript runtime for that platform instead. See [Platform support](#platform-support).
+
 On iOS, tvOS and visionOS the native code is delivered through Swift Package Manager, and the plugin's own `nativescript.config.ts` sets this up. You don't need a Podfile, and your app doesn't need any extra configuration.
+
+On Windows and Linux the native code is a Node-API module (`canvasnative.node`) that ships inside the package, for x64 and arm64. There is nothing to configure here either.
 
 ## Platform support
 
@@ -29,15 +33,17 @@ On iOS, tvOS and visionOS the native code is delivered through Swift Package Man
 | tvOS | 13.0 | New in 3.0 |
 | visionOS | 1.0 | Metal only. `webgl` and `webgl2` are not available. |
 | Android | API 21 | The Vulkan 2D backend needs API 24. |
+| Windows | x64, arm64 | New in 3.0. Runs on the NativeScript Windows runtime (`@nativescript/windows`). |
+| Linux | GTK 4.6, x64, arm64 | New in 3.0. Runs on the NativeScript Linux runtime (`@nativescript/linux`). |
 
 ### Context support per platform
 
-| Context | iOS / tvOS | visionOS | Android |
-| --- | --- | --- | --- |
-| `2d` | Metal (GL with `Canvas.forceGL`) | Metal | Vulkan, or GL when Vulkan is unavailable |
-| `webgl`, `webgl2` | Yes | No | Yes |
-| `webgpu` | Yes (Metal) | Yes (Metal) | Yes (Vulkan, API 27+) |
-| `bitmaprenderer` | Yes | Yes | Yes |
+| Context | iOS / tvOS | visionOS | Android | Windows | Linux |
+| --- | --- | --- | --- | --- | --- |
+| `2d` | Metal (GL with `Canvas.forceGL`) | Metal | Vulkan, or GL when Vulkan is unavailable | Direct3D 12, or CPU if that fails | GL (EGL) |
+| `webgl`, `webgl2` | Yes | No | Yes | Yes (ANGLE) | Yes (EGL) |
+| `webgpu` | Yes (Metal) | Yes (Metal) | Yes (Vulkan, API 27+) | Yes (Direct3D 12) | Yes (Vulkan) |
+| `bitmaprenderer` | Yes | Yes | Yes | Yes | Yes |
 
 ## Core (XML)
 

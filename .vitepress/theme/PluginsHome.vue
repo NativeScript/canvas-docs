@@ -13,7 +13,7 @@ const plugins = [
     stats: {
       contexts: '2D + WebGL + WebGPU',
       engine: 'Skia + WGPU',
-      platforms: 'iOS, tvOS, visionOS & Android',
+      platforms: 'Apple, Android & Windows',
     },
   },
   {
@@ -304,7 +304,7 @@ onBeforeUnmount(() => {
             </div>
             <div class="flex items-center gap-2">
               <div class="h-2 w-2 animate-pulse rounded-full bg-blue-500"></div>
-              <span>iOS, tvOS, visionOS & Android</span>
+              <span>Apple, Android & Windows</span>
             </div>
             <div class="flex items-center gap-2">
               <div class="h-2 w-2 animate-pulse rounded-full bg-orange-500"></div>

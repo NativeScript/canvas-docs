@@ -11,6 +11,8 @@ Native `Video` and `Audio` elements with a web-like API. A video can also act as
 npm install @nativescript/canvas-media
 ```
 
+It plays through AVFoundation on Apple platforms, Media3 (ExoPlayer) on Android, Windows Media on Windows, and GStreamer on Linux. On Linux, video is decoded into GL textures where the system supports it, and falls back to CPU memory otherwise. Set `NS_CANVAS_MEDIA_CPU=1` to force the fallback.
+
 ## Video in a layout
 
 ```xml
@@ -57,7 +59,7 @@ await video.play();
 | 2D | `ctx.drawImage(video, 0, 0, w, h)` |
 | WebGL | `gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video)` |
 | WebGL2 | `texImage2D` and `texImage3D` |
-| WebGPU | `device.queue.copyExternalImageToTexture({ source: video }, { texture }, [w, h])`. This is zero-copy on Apple platforms; Android support is limited. See the [WebGPU video recipe](/canvas/guides/webgpu-recipes#_10-video-frames-as-a-texture). |
+| WebGPU | `device.queue.copyExternalImageToTexture({ source: video }, { texture }, [w, h])`. This stays on the GPU on Apple platforms, Windows and Linux; Android support is limited. See the [WebGPU video recipe](/canvas/guides/webgpu-recipes#_10-video-frames-as-a-texture). |
 
 WebGL `texImage2D` and WebGPU also accept a `Video` view directly.
 

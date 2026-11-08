@@ -28,13 +28,13 @@ The [framework adapters](/plugins/adapters) (Three.js, Pixi, Phaser, Babylon) im
 | Timers | `setTimeout`, `setInterval` and `requestAnimationFrame`, with their cancel functions, on `window` |
 | Document | `document`, `document.fonts`, `document.createElement` (`canvas`, `img`, `video`, `audio`, `div`), `document.createElementNS` for SVG, `DOMParser`, `MutationObserver` |
 | Elements | `HTMLCanvasElement`, `HTMLImageElement`/`Image`, `HTMLVideoElement`, `HTMLAudioElement`, and the `SVG*` element classes |
-| Graphics | `navigator.gpu`, `createImageBitmap`, `ImageBitmap`, `ImageData`, `DOMPoint` |
+| Graphics | `navigator.gpu`, `createImageBitmap`, `ImageBitmap`, `ImageData`, `OffscreenCanvas`, `DOMPoint` |
 | Data | `XMLHttpRequest` (supports `file://`, `~/`, `blob:` and `data:` URLs), `Blob`, `FileReader`, `URL.createObjectURL`, `TextEncoder`, `TextDecoder`, `AbortController` |
 | Media | `VideoFrame`, `VideoColorSpace` |
 | Audio | If [`@nativescript/audio-context`](/audio-context/) is installed: `AudioContext`, `OfflineAudioContext` and every node type |
 | Gamepad | If [`@nativescript/canvas-gamepad`](/plugins/canvas-gamepad) is installed: `navigator.getGamepads()` and the `gamepadconnected` / `gamepaddisconnected` window events |
 
-`fetch` is not polyfilled here. It comes from `@nativescript/core`.
+`fetch` is not polyfilled here. It comes from `@nativescript/core`. On Linux, the polyfill adds support for local files (`~/`, `file://` and absolute paths) to it.
 
 ## Images
 

@@ -10,6 +10,7 @@ description: Svg view properties, events and static helpers in @nativescript/can
 | Property | Default | Description |
 | --- | --- | --- |
 | `src` | | The path, URL or inline markup to render. |
+| `stylesheet` | | CSS for the document, as text or a `~/`, absolute or http path to a `.css` file. See [Styling](/canvas-svg/guides/styling). |
 | `gpu` | `true` | Rasterize on the GPU (Metal on Apple platforms, Vulkan or GL on Android). If no GPU context can be created, the view falls back to the CPU. |
 | `threaded` | `true` | Rasterize off the UI thread. See [Rendering and Performance](/canvas-svg/guides/performance). |
 | `shareSrc` | `true` | Views with the same `src` share one parsed document, one animation clock and one recording per frame. |
@@ -26,11 +27,13 @@ description: Svg view properties, events and static helpers in @nativescript/can
 | Event | Fires when |
 | --- | --- |
 | `animationEnd` | Every animation in the document has finished. It never fires for an animation that repeats forever. |
+| `error` | `src` could not be read, or is not a well-formed SVG document. `args.error` says why, and the view draws nothing. |
 | `contextLost` | The GPU context could not be rebuilt, and drawing has moved to the CPU. |
 | `contextRestored` | A lost GPU context was rebuilt, and GPU drawing has resumed. |
 
 ```ts
 view.on('animationEnd', () => console.log('done'));
+view.on('error', (args) => console.log('could not load:', args.error));
 view.on('contextLost', () => console.log('now drawing on the CPU'));
 ```
 
