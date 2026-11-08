@@ -13,6 +13,7 @@ description: Canvas lifecycle events, pointer and touch input, Android surface e
 | `surfaceCreated` | Android | The surface was created. Only in SurfaceView mode (`Canvas.useSurface = true`). |
 | `surfaceResize` | Android | The surface changed size. The event carries `width` and `height`. |
 | `surfaceDestroyed` | Android | The surface was destroyed, for example when the app goes to the background. |
+| `contextlost`, `webglcontextlost` | Windows | The GPU device was lost (driver reset or update, GPU removed). A 2D context comes back cleared and fires `contextrestored`, unless a listener calls `preventDefault()`. A WebGL context stays lost. |
 
 ```ts
 canvas.on('ready', () => {
@@ -67,4 +68,4 @@ When the canvas is attached, it takes focus. Presses still continue up the respo
 
 ## Game controllers
 
-For full controller state (both sticks, analog triggers and every button) on iOS, tvOS, Android and Windows, use the web Gamepad API through [`@nativescript/canvas-gamepad`](/plugins/canvas-gamepad).
+For full controller state (both sticks, analog triggers and every button) on iOS, tvOS, Android, Windows and Linux, use the web Gamepad API through [`@nativescript/canvas-gamepad`](/plugins/canvas-gamepad).

@@ -38,7 +38,9 @@ A `begin` that waits for an event (such as `click`) never starts on its own.
 ```
 
 - Keyword easings and `cubic-bezier()` are supported. `steps()` runs as linear.
-- Only `#id` selectors are read, which is what SVG exporters produce.
+- Any selector that the [stylesheet](/canvas-svg/guides/styling#selectors) supports can start an animation, and so can an element's own `style="animation: …"`. `@keyframes` can be in any `<style>` block.
+- `translateX`, `translateY`, `scaleX` and `scaleY` animate a single axis. A `transform: none` keyframe is the identity.
+- To animate a document with CSS kept outside it, such as a CodePen's CSS panel, use the [`stylesheet`](/canvas-svg/guides/styling) property.
 
 ## Playback
 

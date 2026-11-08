@@ -20,7 +20,8 @@ npm install @nativescript/audio-context
 ## Requirements
 
 - `@nativescript/audio-context` 2.x requires **NativeScript 9.1 or later**. Pair it with `@nativescript/canvas` 3.x if you use both packages.
-- Supported platforms: iOS, tvOS, visionOS and Android. The tvOS simulator build is arm64 only, so use an Apple silicon Mac to run it in the simulator.
+- Supported platforms: iOS, tvOS, visionOS, Android, Windows and Linux. The tvOS simulator build is arm64 only, so use an Apple silicon Mac to run it in the simulator.
+- On Windows and Linux the graph is rendered by the [web-audio-api](https://github.com/orottier/web-audio-api-rs) engine, playing through WASAPI on Windows and ALSA on Linux (PulseAudio and PipeWire work through their ALSA plugins). `decodeAudioData` reads WAV, MP3, Ogg Vorbis, FLAC and AAC. A `WaveShaperNode` takes only one curve: assigning a second throws `InvalidStateError`.
 
 ## Verify setup
 

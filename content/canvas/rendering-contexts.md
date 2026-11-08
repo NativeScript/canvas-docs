@@ -55,6 +55,7 @@ const gl = canvas.getContext('webgl2', { antialias: false, preserveDrawingBuffer
 | `failIfMajorPerformanceCaveat` | `false` | WebGL |
 | `desynchronized` | `false` | 2D, WebGL |
 | `willReadFrequently` | `false` | 2D. See [Performance](/canvas/performance#reading-pixels-back). |
+| `threaded` | `true` (Android, iOS, Windows) | 2D, WebGL. A NativeScript extra. See [Threaded rendering](/canvas/performance#threaded-rendering). |
 
 ## 2D backends
 
@@ -64,8 +65,14 @@ The 2D context is drawn by Skia on the GPU:
 | --- | --- | --- |
 | iOS, tvOS, visionOS | Metal | GL, if you set `Canvas.forceGL = true` before `getContext` (not on visionOS) |
 | Android | Vulkan (API 24+ with a supported driver) | GL |
+| Windows | Direct3D 12 | CPU |
+| Linux | GL (EGL) | |
 
 `willReadFrequently: true` switches that canvas to a CPU raster surface instead.
+
+## Canvases without a view
+
+`OffscreenCanvas` supports every context type above, and can move to a Worker. See [OffscreenCanvas and Workers](/canvas/guides/offscreen-canvas).
 
 ## bitmaprenderer
 
@@ -97,3 +104,4 @@ The package follows web API behavior where possible:
 - [WebGL Recipes](/canvas/guides/webgl-recipes)
 - [WebGPU Recipes](/canvas/guides/webgpu-recipes)
 - [Images and ImageBitmap](/canvas/guides/images-and-bitmaps)
+- [OffscreenCanvas and Workers](/canvas/guides/offscreen-canvas)

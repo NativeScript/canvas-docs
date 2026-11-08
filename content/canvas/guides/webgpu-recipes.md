@@ -283,6 +283,7 @@ fn fs_main(@location(0) uv: vec2f) -> @location(0) vec4f {
 ```
 
 - **iOS, tvOS, visionOS (Metal):** the frame is imported on the GPU.
+- **Windows and Linux:** the decoder shares its frames with WebGPU on the GPU.
 - **Android:** this works only on API 29+, and only when the video decoder outputs RGB buffers. Most hardware decoders output YCbCr, and on those devices video frames cannot reach a WebGPU texture yet. On Android, use WebGL `texImage2D` or 2D `drawImage` for video.
 - Keep a single long-lived texture. If no new frame has been decoded since the last copy, the copy is skipped and the texture keeps the previous frame.
 - To sample the video directly in a shader, without a copy, use [`importExternalTexture`](#_11-sampling-video-with-importexternaltexture).
@@ -329,7 +330,7 @@ fn main(@location(0) uv: vec2f) -> @location(0) vec4f {
 
 - Import every frame, as on the web. If the decoder has no new frame yet, you get the previous one back.
 - `source` must be a video element, either from `document.createElement('video')` or a canvas-media `Video`. `VideoFrame` sources are not supported.
-- Supported on iOS, tvOS and visionOS. On Android it throws `NotSupportedError`; use [recipe 10](#_10-video-frames-as-a-texture) or WebGL there instead.
+- Supported on iOS, tvOS, visionOS, Windows and Linux. On Android it has the same limits as [recipe 10](#_10-video-frames-as-a-texture): API 29+, and a decoder that outputs RGB buffers. Where frames can't be imported, it throws `NotSupportedError`; use WebGL there instead.
 - Once `await video.play()` resolves, a frame is available, as on the web. Calling it before `play()` has resolved, or before the video has loaded, throws `InvalidStateError`.
 
 ## More guides

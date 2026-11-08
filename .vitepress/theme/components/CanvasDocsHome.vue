@@ -17,7 +17,7 @@ const rootRef = ref<HTMLElement | null>(null);
         </p>
 
         <div class="canvas-docs-chip-row">
-          <span>iOS, tvOS, visionOS + Android</span>
+          <span>iOS, tvOS, visionOS, Android + Windows</span>
           <span>Skia-backed rendering</span>
           <span>GPU-ready workflows</span>
           <span>Web API muscle memory</span>
